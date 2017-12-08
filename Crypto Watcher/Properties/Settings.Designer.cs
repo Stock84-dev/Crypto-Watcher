@@ -38,12 +38,12 @@ namespace CryptoWatcher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool autoUpdate {
+        public bool lookForUpdates {
             get {
-                return ((bool)(this["autoUpdate"]));
+                return ((bool)(this["lookForUpdates"]));
             }
             set {
-                this["autoUpdate"] = value;
+                this["lookForUpdates"] = value;
             }
         }
     }

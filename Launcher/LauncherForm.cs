@@ -30,6 +30,7 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Web.Script.Serialization;
 using Launcher.Properties;
+using System.Reflection;
 
 namespace Launcher
 {
@@ -84,6 +85,8 @@ namespace Launcher
             else if (Settings.Default.autoUpdate && LookForUpdates())
             {
                 txtBox.Text = net_version_no[1];
+                lblCurrentVersion.Text = "Current version: " + current_version_no;
+                lblNewVersion.Text = "New version: " + net_version_no[0];
                 Show();
             }
             // no updates found so we launch app
@@ -190,6 +193,7 @@ namespace Launcher
             }
             Instruction.DoWork();
             Directory.Delete("tmp", true);
+
             StartApp();
         }
 

@@ -22,7 +22,7 @@
         "Entry"
         {
         "MsmKey" = "8:_1B374FF63B6213CBE5519DF6D6A8A92A"
-        "OwnerKey" = "8:_38E5BADE72504852962BA6ACC53F2762"
+        "OwnerKey" = "8:_FB4B3CE3174B4DD28106B6C950ED0868"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -34,7 +34,7 @@
         "Entry"
         {
         "MsmKey" = "8:_1B374FF63B6213CBE5519DF6D6A8A92A"
-        "OwnerKey" = "8:_FB4B3CE3174B4DD28106B6C950ED0868"
+        "OwnerKey" = "8:_38E5BADE72504852962BA6ACC53F2762"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -166,49 +166,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9288487BC70288CEE7B64B83693E9CCB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A9B9038B14108A844269402CF482BC35"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1FE60CF07F9B8A387CFB6BC87C74C904"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2B263B40883E8B6E86C720B3B9D80348"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1B374FF63B6213CBE5519DF6D6A8A92A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DAE1780572A2FFCDAE6F0FD1D69D8B8A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DAF5C968BF4D613F81AF35981FC69D7D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7BEC2D57142D0413A5C971EC8D4052A5"
+        "OwnerKey" = "8:_FB4B3CE3174B4DD28106B6C950ED0868"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -220,7 +178,49 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FB4B3CE3174B4DD28106B6C950ED0868"
+        "OwnerKey" = "8:_7BEC2D57142D0413A5C971EC8D4052A5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DAF5C968BF4D613F81AF35981FC69D7D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DAE1780572A2FFCDAE6F0FD1D69D8B8A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1B374FF63B6213CBE5519DF6D6A8A92A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2B263B40883E8B6E86C720B3B9D80348"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1FE60CF07F9B8A387CFB6BC87C74C904"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A9B9038B14108A844269402CF482BC35"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_9288487BC70288CEE7B64B83693E9CCB"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -339,6 +339,11 @@
             "AssemblyAsmDisplayName" = "8:MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_1B374FF63B6213CBE5519DF6D6A8A92A"
+                    {
+                    "Name" = "8:MetroFramework.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:MetroFramework.dll"
             "TargetName" = "8:"
@@ -365,6 +370,11 @@
             "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
+                    "_1FE60CF07F9B8A387CFB6BC87C74C904"
+                    {
+                    "Name" = "8:System.Net.Http.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Net.Http.dll"
             "TargetName" = "8:"
@@ -391,6 +401,11 @@
             "AssemblyAsmDisplayName" = "8:Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_2B263B40883E8B6E86C720B3B9D80348"
+                    {
+                    "Name" = "8:Common.Logging.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Common.Logging.dll"
             "TargetName" = "8:"
@@ -437,6 +452,11 @@
             "AssemblyAsmDisplayName" = "8:Spring.Social.Core, Version=1.0.0.5340, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_7742A580B49422F4F5A377F3FAD0F6D3"
+                    {
+                    "Name" = "8:Spring.Social.Core.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Spring.Social.Core.dll"
             "TargetName" = "8:"
@@ -463,6 +483,11 @@
             "AssemblyAsmDisplayName" = "8:Spring.Rest, Version=1.1.0.5340, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_7BEC2D57142D0413A5C971EC8D4052A5"
+                    {
+                    "Name" = "8:Spring.Rest.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Spring.Rest.dll"
             "TargetName" = "8:"
@@ -540,6 +565,11 @@
             "AssemblyAsmDisplayName" = "8:System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
                 "ScatterAssemblies"
                 {
+                    "_A9B9038B14108A844269402CF482BC35"
+                    {
+                    "Name" = "8:System.IO.Compression.FileSystem.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.IO.Compression.FileSystem.dll"
             "TargetName" = "8:"
@@ -566,6 +596,11 @@
             "AssemblyAsmDisplayName" = "8:MetroFramework.Design, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_DAE1780572A2FFCDAE6F0FD1D69D8B8A"
+                    {
+                    "Name" = "8:MetroFramework.Design.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:MetroFramework.Design.dll"
             "TargetName" = "8:"
@@ -592,6 +627,11 @@
             "AssemblyAsmDisplayName" = "8:MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_DAF5C968BF4D613F81AF35981FC69D7D"
+                    {
+                    "Name" = "8:MetroFramework.Fonts.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:MetroFramework.Fonts.dll"
             "TargetName" = "8:"
@@ -741,7 +781,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Crypto Watcher"
         "ProductCode" = "8:{11C2044C-EB1B-41B4-B42F-2B0A41FC945D}"
-        "PackageCode" = "8:{A8642F67-B5B8-40B2-B9E7-A1F8E80144CB}"
+        "PackageCode" = "8:{6D16AC3F-D25E-4CF6-A7C6-3D392A026F65}"
         "UpgradeCode" = "8:{92705855-9959-46A6-A78D-9209DF89E5A8}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -758,7 +798,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:"
+        "ARPPRODUCTICON" = "8:_FA3696581E884AA4AE22F8089316308C"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"

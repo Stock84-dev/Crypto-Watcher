@@ -71,6 +71,7 @@ namespace Crypto_watcher
             this.chcBoxAutoUpdate = new MetroFramework.Controls.MetroCheckBox();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.chcBoxPlaySound = new MetroFramework.Controls.MetroCheckBox();
+            this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.tabControl.SuspendLayout();
             this.tabAlert.SuspendLayout();
             this.tabWatch.SuspendLayout();
@@ -241,9 +242,10 @@ namespace Crypto_watcher
             this.chcBoxAutoUpdate.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chcBoxAutoUpdate.Location = new System.Drawing.Point(3, 24);
             this.chcBoxAutoUpdate.Name = "chcBoxAutoUpdate";
-            this.chcBoxAutoUpdate.Size = new System.Drawing.Size(87, 15);
+            this.chcBoxAutoUpdate.Size = new System.Drawing.Size(112, 15);
             this.chcBoxAutoUpdate.TabIndex = 4;
-            this.chcBoxAutoUpdate.Text = "AutoUpdate";
+            this.chcBoxAutoUpdate.Text = "Look for updates";
+            this.metroToolTip1.SetToolTip(this.chcBoxAutoUpdate, "Looks for updates when program starts.");
             this.chcBoxAutoUpdate.UseSelectable = true;
             this.chcBoxAutoUpdate.CheckedChanged += new System.EventHandler(this.chcBoxAutoUpdate_CheckedChanged);
             // 
@@ -267,11 +269,18 @@ namespace Crypto_watcher
             this.chcBoxPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chcBoxPlaySound.Location = new System.Drawing.Point(3, 3);
             this.chcBoxPlaySound.Name = "chcBoxPlaySound";
-            this.chcBoxPlaySound.Size = new System.Drawing.Size(79, 15);
+            this.chcBoxPlaySound.Size = new System.Drawing.Size(81, 15);
             this.chcBoxPlaySound.TabIndex = 2;
-            this.chcBoxPlaySound.Text = "PlaySound";
+            this.chcBoxPlaySound.Text = "Play sound";
+            this.metroToolTip1.SetToolTip(this.chcBoxPlaySound, "Plays sound on notification.");
             this.chcBoxPlaySound.UseSelectable = true;
             this.chcBoxPlaySound.CheckedChanged += new System.EventHandler(this.chcBoxPlaySound_CheckedChanged);
+            // 
+            // metroToolTip1
+            // 
+            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroToolTip1.StyleManager = null;
+            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // Form1
             // 
@@ -315,6 +324,7 @@ namespace Crypto_watcher
         private MetroFramework.Controls.MetroLabel metroLabel2;
         private MetroFramework.Controls.MetroLabel metroLabel1;
         private MetroFramework.Controls.MetroCheckBox chcBoxAutoUpdate;
+        private MetroFramework.Components.MetroToolTip metroToolTip1;
     }
 }
 

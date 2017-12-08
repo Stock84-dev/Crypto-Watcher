@@ -96,10 +96,10 @@ namespace Crypto_watcher
         private void chcBoxAutoUpdate_CheckedChanged(object sender, EventArgs e)
         {
             Application.DoEvents();
-            Settings.Default.autoUpdate = chcBoxAutoUpdate.Checked;
+            Settings.Default.lookForUpdates = chcBoxAutoUpdate.Checked;
             Settings.Default.Save();
             StreamWriter sw = new StreamWriter("SharedSettings.txt");
-            sw.WriteLine(new JavaScriptSerializer().Serialize(Settings.Default.autoUpdate));
+            sw.WriteLine(new JavaScriptSerializer().Serialize(Settings.Default.lookForUpdates));
             sw.Close();
         }
 
@@ -109,9 +109,9 @@ namespace Crypto_watcher
             if (!File.Exists("SharedSettings.txt"))
                 return;
             StreamReader sr = new StreamReader("SharedSettings.txt");
-            Settings.Default.autoUpdate = (bool)new JavaScriptSerializer().Deserialize(sr.ReadLine(), typeof(bool));
+            Settings.Default.lookForUpdates = (bool)new JavaScriptSerializer().Deserialize(sr.ReadLine(), typeof(bool));
             sr.Close();
-            chcBoxAutoUpdate.Checked = Settings.Default.autoUpdate;
+            chcBoxAutoUpdate.Checked = Settings.Default.lookForUpdates;
         }
         #endregion
         // ****************************************************** Timers ************************************************************** //
