@@ -1,0 +1,14 @@
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\bin\Debug\Crypto alert app.exe.config
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\bin\Debug\Crypto alert app.exe
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\bin\Debug\Crypto alert app.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\obj\Debug\Crypto_alert_app.Form1.resources
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\obj\Debug\Crypto_alert_app.Properties.Resources.resources
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\obj\Debug\Crypto alert app.csproj.GenerateResource.Cache
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\obj\Debug\Crypto alert app.csproj.CoreCompileInputs.cache
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\obj\Debug\Crypto alert app.exe
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\obj\Debug\Crypto alert app.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\obj\Debug\Crypto_alert_app.CustomAlertForm.resources
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\bin\Debug\MetroFramework.Design.dll
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\bin\Debug\MetroFramework.dll
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\bin\Debug\MetroFramework.Fonts.dll
+D:\Documents\Visual studio 2017\Projects\Crypto alert app\Crypto alert app\obj\Debug\Crypto alert app.csprojResolveAssemblyReference.cache

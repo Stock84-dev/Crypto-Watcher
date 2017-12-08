@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crypto Watcher", "Crypto Watcher\Crypto Watcher.csproj", "{64916294-9D1D-4426-AA2E-8DBC06AED62C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Launcher\Launcher.csproj", "{0F255A07-C40C-450A-B2D5-94D5729AA0FE}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CryptoWatchSetup", "CryptoWatchSetup\CryptoWatchSetup.vdproj", "{8AE98E21-2132-498D-9BC2-93CD89045C6B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64916294-9D1D-4426-AA2E-8DBC06AED62C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64916294-9D1D-4426-AA2E-8DBC06AED62C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64916294-9D1D-4426-AA2E-8DBC06AED62C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64916294-9D1D-4426-AA2E-8DBC06AED62C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F255A07-C40C-450A-B2D5-94D5729AA0FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F255A07-C40C-450A-B2D5-94D5729AA0FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F255A07-C40C-450A-B2D5-94D5729AA0FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F255A07-C40C-450A-B2D5-94D5729AA0FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AE98E21-2132-498D-9BC2-93CD89045C6B}.Debug|Any CPU.ActiveCfg = Debug
+		{8AE98E21-2132-498D-9BC2-93CD89045C6B}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0966D2F9-C749-4FB3-A8A3-3326A2EC5FC5}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,21 @@
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\CryptoWatcher.exe.config
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\CryptoWatcher.exe
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\CryptoWatcher.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.Design.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.Fonts.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto_watcher.CustomAlertForm.resources
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto_watcher.Form1.resources
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.Properties.Resources.resources
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.GenerateResource.Cache
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.CoreCompileInputs.cache
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.exe
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Common.Logging.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csprojResolveAssemblyReference.cache
