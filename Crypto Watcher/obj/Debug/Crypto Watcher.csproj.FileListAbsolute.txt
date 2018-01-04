@@ -20,7 +20,5 @@ D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csprojResolveAssemblyReference.cache
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.CustomAlertForm.resources
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.Properties.Resources.resources
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\ObjectListView.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\ObjectListView.xml
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Tulpep.NotificationWindow.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.MainForm.resources

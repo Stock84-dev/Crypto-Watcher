@@ -54,6 +54,7 @@ namespace Launcher
         public LauncherForm()
         {
             InitializeComponent();
+			Instruction.SaveInstructions();
             // shared settings contains autoUpdate option that main app writes to it
             if (!File.Exists("SharedSettings.txt"))
                 return;
@@ -323,13 +324,16 @@ namespace Launcher
         {
             instructions.Add(new Instruction(InstructionType.delete, "CryptoWatcher.exe"));
             instructions.Add(new Instruction(InstructionType.move, "tmp/CryptoWatcher.exe", "CryptoWatcher.exe"));
-            Save();
+			instructions.Add(new Instruction(InstructionType.move, "tmp/Newtonsoft.Json.dll", "Newtonsoft.Json.dll"));
+			instructions.Add(new Instruction(InstructionType.move, "tmp/Tulpep.NotificationWindow.dll", "Tulpep.NotificationWindow.dll"));
+			instructions.Add(new Instruction(InstructionType.move, "tmp/CryptoWatcher.exe.config", "CryptoWatcher.exe.config"));
+			Save();
         }
 
         private static void Save()
         {
             // creating filestream that can write a file
-            FileStream fs = new FileStream("Save/Instructions.txt", FileMode.Create, FileAccess.Write);
+            FileStream fs = new FileStream("Instructions.txt", FileMode.Create, FileAccess.Write);
             // if we don't have permission to write we exit function
             if (!fs.CanWrite)
                 return;
