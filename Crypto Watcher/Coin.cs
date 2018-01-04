@@ -29,7 +29,7 @@ using System.Net;
 using System.IO;
 using System.Web.Script.Serialization;
 
-namespace Crypto_watcher
+namespace Alerts
 {
     public class Coin
     {

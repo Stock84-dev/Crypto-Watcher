@@ -35,54 +35,182 @@ using CryptoWatcher.Properties;
 using System.IO;
 using System.Net;
 using System.Web.Script.Serialization;
+using System.Threading;
+using Alerts;
+using System.Diagnostics;
+using System.Globalization;
 
+// https://github.com/CoinCapDev/CoinCap.io
+// https://www.cryptocompare.com/api/#-api-data-price // https://min-api.cryptocompare.com/data/histoday?aggregate=1&e=CCCAGG&extraParams=CryptoCompare&fsym=BTC&limit=365&tryConversion=false&tsym=USD
+//https://cryptocoincharts.info/tools/api
+//https://www.iconfinder.com
+
+// search for apis: https://www.programmableweb.com/category/all/apis?keyword=cryptocurrency
+// reducing file size https://stackoverflow.com/questions/5397070/how-to-save-large-data-to-file
+// documentation // https://docs.microsoft.com/en-us/dotnet/csharp/codedoc
+
+// fastest read speed
+/*using (StreamReader sr = File.OpenText(fileName))
+{
+        string s = String.Empty;
+        while ((s = sr.ReadLine()) != null)
+        {
+            //we're just testing read speeds
+        }
+}
+ *
+ */
 // TODO: change site to cryptowatcher (if coin isn't found in cryptowatcher then take it from coinmarketcap 5min update)
 // TODO: integrate email notification
 // TODO: add edit alert button
+// TODO: add fund calculator use coinmarketcap for total amount of currencies e.g. 1000 download 100 then 200 then 400 coins... with max 10 downloads
+// TDOD: when user selects absolute alert and conditions are met tell him that alert would imidetly be hit
+// TODO: maybe add price and values of other indicators whne adding alert so user can see it?
+// TODO: get graph for watch section got to coinmarketcap.com - view source - line 1027 - generated sparkline link and download sparkline
 
 // nice tutorial for setup http://www.c-sharpcorner.com/UploadFile/1492b1/creating-an-msi-package-for-C-Sharp-windows-application-using-a-v/
-namespace Crypto_watcher
+// TODO: when there are more than 1 notification and user deletes the mw get indoex out of range exception because indexes got updated whe aler got deleted. Suggestion: remove id in grid view and add it to notification calsss when notification is deleted update id in all notificatons 
+namespace CryptoWatcher
 {
-    public partial class Form1 : MetroFramework.Forms.MetroForm
+	public partial class MainForm : MetroFramework.Forms.MetroForm, IFormReference
     {
-        private Notification notification;
         private bool show_baloonTip = true;
-       
-        public Form1()
-        {
-            InitializeComponent();
-            notification = new Notification();
-            notifyIcon1.BalloonTipTitle = "Crypto Watcher";
-            notifyIcon1.BalloonTipText = "Application minimized.";
-            LoadSettings();
-            tabControl.SelectedTab = tabAlert;
-        }
+		DataTable table = new DataTable();
+		CustomAlertForm customAlertForm = new CustomAlertForm();
 
-        // ****************************************************** Window related ****************************************************** //
-#region
-        private void MainResize(object sender, EventArgs e)
+		public MainForm()
+		{
+			InitializeComponent();
+			ntfyIconMinimized.BalloonTipTitle = "Crypto Watcher";
+			ntfyIconMinimized.BalloonTipText = "Application minimized.";
+			LoadSettings();
+			tabControl.SelectedTab = tabAlert;
+			
+			//Alerts.assets = CryptowatchAPI.GetAssets();
+			//StreamWriter sw = new StreamWriter("allowanceGetTrades.txt");
+			//	long max = long.MinValue;
+			//	long min = long.MaxValue;
+			//	double sum = 0;
+			//	long i = 0;
+			//	while (i < 100)
+			//	{
+
+			//			List<Assets> assets = CryptowatchAPI.GetAssets();
+			//			Asset asset = CryptowatchAPI.GetAsset("https://api.cryptowat.ch/assets/btc");
+			//			List<Candlestick> candlesticks = CryptowatchAPI.GetCandlesticks("https://api.cryptowat.ch/markets/gdax/btcusd/ohlc", TimeFrame.min1);
+			//			List<Exchanges> exchanges = CryptowatchAPI.GetExchanges();
+			//			Exchange exchange = CryptowatchAPI.GetExchange(exchanges[0].route);
+			//			List<Markets> markets = CryptowatchAPI.GetMarkets();
+			//			List<Markets> exchange_markets = CryptowatchAPI.GetMarkets(exchange.routes.markets);
+			//			Market market = CryptowatchAPI.GetMarket(markets[0].route);//https://api.cryptowat.ch/markets/gdax/btcusd
+			//			OrderBook orderBook = CryptowatchAPI.GetOrderBook(market.routes.orderbook);
+			//			List<Pairs> pairs = CryptowatchAPI.GetPairs();
+			//			Pair pair = CryptowatchAPI.GetPair(pairs[0].route);
+			//			Dictionary<string, double> prices = CryptowatchAPI.GetPrices();
+			//			double price = CryptowatchAPI.GetPrice(market.routes.price);
+			//			SiteInformation siteInformation = CryptowatchAPI.GetSiteInformation();
+			//			Dictionary<string, Summary> simmaries = CryptowatchAPI.GetSummaries();
+			//			Summary summary = CryptowatchAPI.GetSummary("https://api.cryptowat.ch/markets/gdax/btcusd/summary");
+			//			List<Trade> trades = CryptowatchAPI.GetTrades("https://api.cryptowat.ch/markets/gdax/btcusd/trades");
+			//			if (CryptowatchAPI.allowance.cost < min)
+			//				min = CryptowatchAPI.allowance.cost;
+			//			else if (CryptowatchAPI.allowance.cost > max)
+			//				max = CryptowatchAPI.allowance.cost;
+			//			//sw.WriteLine(i.ToString() + ".cost=" + CryptowatchAPI.allowance.cost.ToString());
+			//			//sum += CryptowatchAPI.allowance.cost;
+
+
+			//			//sw.WriteLine("MinValue=" + min.ToString());
+			//			//sw.WriteLine("MaxValue=" + max.ToString());
+			//			//sw.Close();
+
+			//		i++;
+			//	}
+			//	//sw.WriteLine("MinValue=" + min.ToString());
+			//	//sw.WriteLine("MaxValue=" + max.ToString());
+			//	//sw.WriteLine("AverageValue=" + (sum / 100).ToString());
+			//	//sw.Close();
+
+			//List<Ticker> ticker =  CoinMarketCapAPI.GetTickers(2, 9, Quote.KRW);
+			//Ticker ticker = CoinMarketCapAPI.GetTicker("bitcoin", Quote.MYR);
+			//GlobalData globalData = CoinMarketCapAPI.GetGlobalData(Quote.EUR);
+			table.Columns.Add("Id", typeof(int));
+			table.Columns.Add("Date", typeof(string));
+			table.Columns.Add("Message", typeof(string));
+			//table.Rows.Add(-1, "30.12.2017.20:09:02", "NO MESSAGE");
+			//table.Rows.Add(-1, "30.12.2017.20:09:02", "NO MESSAGE");
+
+			grdNotifications.DataSource = table;
+
+			DataGridViewButtonColumn dismissBtnColumn = new DataGridViewButtonColumn();
+			{
+				dismissBtnColumn.Name = "dismissColumn";
+				dismissBtnColumn.HeaderText = "Dismiss";
+				dismissBtnColumn.Text = "Dismiss";
+				dismissBtnColumn.UseColumnTextForButtonValue = true; //dont forget this line
+				this.grdNotifications.Columns.Add(dismissBtnColumn);
+			}
+			grdNotifications.Columns["Id"].Visible = false;
+			grdNotifications.Columns[1].Width = 125;
+			grdNotifications.Columns[2].Width = grdNotifications.Width - grdNotifications.Columns[1].Width - 145;
+
+			//DataGridViewButtonColumn uninstallButtonColumn = new DataGridViewButtonColumn();
+			//uninstallButtonColumn.Name = "uninstall_column";
+			//uninstallButtonColumn.Text = "Uninstall";
+			//int columnIndex = 2;
+			//if (grdNotifications.Columns["uninstall_column"] == null)
+			//{
+			//	grdNotifications.Columns.Insert(columnIndex, uninstallButtonColumn);
+			//}
+		}
+
+		private async void MainForm_Load(object sender, EventArgs e)
+		{
+			Alert.LoadAlerts();
+			foreach (var alert in Alert.AlertList)
+			{
+				ListViewItem listViewItem = new ListViewItem(alert.ToRow());
+				lstView.Items.Add(listViewItem);
+			}
+
+			await Alert.UpdateTickerList();
+			alert_timer.Enabled = true;
+		}
+
+		private void grdNotifications_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+			//if(grdNotifications.Columns[e.ColumnIndex].Name == "Action")
+			//{
+			//	if (MessageBox.Show("Are you sure you want to delete this record?", "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+			//		grdNotifications.Rows.RemoveAt(e.RowIndex);
+			//}
+			if (e.ColumnIndex == grdNotifications.Columns["dismissColumn"].Index)
+			{
+				Alert.AlertList[Convert.ToInt32(grdNotifications.Rows[e.RowIndex].Cells["Id"].Value)].StopNotifying();
+				foreach (DataGridViewRow row in grdNotifications.Rows)
+				{
+					if(Convert.ToInt32(row.Cells["Id"].Value) > Convert.ToInt32(grdNotifications.Rows[e.RowIndex].Cells["Id"].Value))
+					{
+						row.Cells["Id"].Value = Convert.ToInt32(row.Cells["Id"].Value) - 1;
+					}
+				}
+				grdNotifications.Rows.RemoveAt(e.RowIndex);
+			}
+		}
+
+		// ****************************************************** Window related ****************************************************** //
+		#region
+		private void MainResize(object sender, EventArgs e)
         {
             // when you click minimize window it goes to system tray
             if (WindowState == FormWindowState.Minimized && show_baloonTip)
             {
                 ShowInTaskbar = false;
-                notifyIcon1.Visible = true;
-                notifyIcon1.ShowBalloonTip(1000);
+                ntfyIconMinimized.Visible = true;
+                ntfyIconMinimized.ShowBalloonTip(1000);
             }
             else 
                 show_baloonTip = true;
-        }
-
-        // gets called after the form is loaded
-        private void Form1_Shown(object sender, EventArgs e)
-        {
-            Alert.Load();
-            
-            foreach (var alert in Alert.alerts)
-            {
-                ListViewItem listViewItem = new ListViewItem(alert.ToRow());
-                lstView.Items.Add(listViewItem);
-            }
         }
         #endregion
         // ****************************************************** Settings ************************************************************ //
@@ -113,87 +241,160 @@ namespace Crypto_watcher
             sr.Close();
             chcBoxAutoUpdate.Checked = Settings.Default.lookForUpdates;
         }
-        #endregion
-        // ****************************************************** Timers ************************************************************** //
-#region
-        // runs on application load to start main timer 
-        private void StartingTimerTick(object sender, EventArgs e) // TODO: when starting timer starts test alerts
+		#endregion
+		// ****************************************************** Timers ************************************************************** //
+		#region
+        private async void AlertTimerTick(object sender, EventArgs e)
         {
-            int time = DateTime.Now.Minute;
-            // API calls are updated every 5 minutes
-            if (time % 5 == 0)
-            {
-                starting_timer.Stop();
-                AlertTimerTick(null, null);
-                alert_timer.Start();
-            }
-        }
-        // every 5 minutes we see if some conditions are met
-        private void AlertTimerTick(object sender, EventArgs e)
-        {
-           
-            foreach (var alert in Alert.alerts)
-            {
-                if(alert.Test())
-                {
-                    ShowNotification("Alert triggered: " + alert.coin.name + 
-                        ", price of " + (alert.condition.market_type == (int)MarketType.USD ? alert.coin.price_usd : alert.coin.price_btc)
-                        + " passed alert point of " + alert.condition.value + ".");
-                    
-                }
-            }
-        }
-        #endregion
-        // ****************************************************** Notifications ******************************************************* //
-#region
-        private void ShowNotification(string message)
-        {
-            // showing window on top
-            show_baloonTip = false;
-            WindowState = FormWindowState.Minimized;
-            Show();
-            WindowState = FormWindowState.Normal;
+			// if there aren't alerts we exit
+			if (Alert.AlertList.Count == 0)
+				return;
+			long average_costs;
+			// for all alerts we are testing condition and if condition is fullfilled we show message to notify user
+			DateTime currentTime = DateTime.Now;
+			for (int i = 0; i < Alert.AlertList.Count; i++)
+			{
+				if (Alert.AlertList[i].LastTriggered + new TimeSpan(0, 0, Alert.AlertList[i].notification.Interval) <= currentTime && !Alert.AlertList[i].IsNotifying && await Alert.AlertList[i].Test())
+				{
+					Alert.AlertList[i].Notify(currentTime);
+				}
+			}
+			average_costs = Alert.GetAverageCosts();
+			long next_update_time;
+			if (average_costs != 0)
+			{
+				// TODO: either use fixed amount or average costs for all functions that are triggered by user for reserve
+				// we are keeping some costs for reserve that equals to all costs that is used to one timer tick
+				long n_of_updates_left = (APIs.CryptowatchAPI.allowance.remaining - average_costs) / average_costs;
+				int minutes_left = 60 - DateTime.Now.Minute;
+				next_update_time = minutes_left / n_of_updates_left * 60000;
+				// limiting to  second interval
+				if (next_update_time < 1000)
+					next_update_time = 1000;
+			}
+			else next_update_time = 1000;
 
-            notification.Notify(message);
-        }
-        // occurs when you click on icon in system tray
-        private void ntfy_Click(object sender, EventArgs e)
+			alert_timer.Interval = (int)next_update_time;
+			lblNextUpdate.Text = ((int)(next_update_time / 1000)).ToString() + "s";
+		}
+
+		private void CMCStartingTimer_Tick(object sender, EventArgs e)
+		{
+			if(DateTime.Now.Minute % 5 == 0)
+			{
+				CMCTimer_Tick(null, null);
+				CMCTimer.Enabled = true;
+				CMCStartingTimer.Enabled = false;
+			}
+		}
+
+		private async void CMCTimer_Tick(object sender, EventArgs e)
+		{
+			await Alert.UpdateTickerList();
+		}
+
+		#endregion
+		// ****************************************************** Notifications ******************************************************* //
+		#region
+		void IFormReference.ShowWindow()
+		{
+			Activate();
+			tabControl.SelectedTab = tabNotifications;
+		}
+
+		void IFormReference.AddMessage(int id)
+		{
+			bool found = false;
+			
+			// preventing notification build up
+			foreach (DataGridViewRow row in grdNotifications.Rows)
+			{
+				if (Convert.ToInt32(row.Cells["Id"].Value) == id)
+				{
+					row.Cells["Date"].Value = DateTime.Now.ToString();
+					row.Cells["Message"].Value = Alert.AlertList[id].Message;
+					row.Selected = true;
+					found = true;
+					break;
+				}
+			}
+
+			// if we havent found notification we create it
+			if (!found)
+			{
+				table.Rows.Add(id, DateTime.Now.ToString(), Alert.AlertList[id].Message);
+				grdNotifications.Rows[grdNotifications.Rows.Count - 1].Selected = true;
+			}
+		}
+
+		void IFormReference.TryRemoveAlert(int id)
+		{
+			// if alert is one time only we delete it
+			if (Alert.AlertList[id].notification.Interval == -1)
+			{
+				lstView.Items.RemoveAt(id);
+				Alert.AlertList.RemoveAt(id);
+				Alert.SaveAlerts();
+			}
+		}
+
+		void IFormReference.AddAlertToListView()
+		{
+			lstView.Items.Add(new ListViewItem(Alert.AlertList.Last().ToRow()));
+		}
+
+		// occurs when user clicks popup message
+		void IFormReference.Popup_Click(object sender, EventArgs e)
+		{
+			((IFormReference)this).ShowWindow();
+		}
+
+		// occurs when you click on icon in system tray
+		private void ntfy_DClick(object sender, EventArgs e)
         {
             ShowInTaskbar = true;
-            notifyIcon1.Visible = false;
-            WindowState = FormWindowState.Normal;
+            ntfyIconMinimized.Visible = false;
+			WindowState = FormWindowState.Normal;
+			Visible = true;
+			Activate();
         }
-#endregion
-        // ****************************************************** Buttons ************************************************************* //
-#region
-        private void btnNew_Click(object sender, EventArgs e)
-        {
-            // creating new window
-            CustomAlertForm customAlertForm = new CustomAlertForm();
-            customAlertForm.ShowDialog();
+		#endregion
+		// ****************************************************** Buttons ************************************************************* //
+		#region
+		private void btnNew_Click(object sender, EventArgs e)
+		{
+			customAlertForm.Show();
+		}
 
-            if (!customAlertForm.added_alert)
-                return;
-
-            customAlertForm.added_alert = false;
-            lstView.Items.Add(new ListViewItem(Alert.alerts.Last().ToRow()));
-        }
-
-        private void btnRemove_Click(object sender, EventArgs e)
+		private void btnRemove_Click(object sender, EventArgs e)
         {
             if (lstView.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Please select item in box to remove it.");
                 return;
             }
 
-            foreach (ListViewItem eachItem in lstView.SelectedItems)
+			// removing in notification area
+			foreach (DataGridViewRow row in grdNotifications.Rows)
+			{
+				foreach (ListViewItem eachItem in lstView.SelectedItems)
+				{
+					if (Convert.ToInt32(row.Cells["Id"].Value) == eachItem.Index)
+					{
+						grdNotifications.Rows.RemoveAt(row.Index);
+						break;
+					}
+				}
+			}
+
+			// removing in alerts list view
+			foreach (ListViewItem eachItem in lstView.SelectedItems)
             {
-                Alert.alerts.RemoveAt(eachItem.Index);
+				Alert.AlertList[eachItem.Index].StopNotifying(false);
+                Alert.AlertList.RemoveAt(eachItem.Index);
                 lstView.Items.Remove(eachItem);
             }
-            Alert.Save();
+            Alert.SaveAlerts();
         }
-#endregion
-    }
+		#endregion
+	}
 }

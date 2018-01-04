@@ -11,11 +11,16 @@ D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Relea
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Spring.Rest.xml
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Spring.Social.Core.pdb
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Spring.Social.Core.xml
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto_watcher.CustomAlertForm.resources
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto_watcher.Form1.resources
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.Properties.Resources.resources
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto Watcher.csproj.GenerateResource.Cache
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto Watcher.csproj.CoreCompileInputs.cache
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.exe
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.pdb
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto Watcher.csprojResolveAssemblyReference.cache
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Newtonsoft.Json.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\ObjectListView.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Tulpep.NotificationWindow.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Newtonsoft.Json.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\ObjectListView.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.CustomAlertForm.resources
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.MainForm.resources
