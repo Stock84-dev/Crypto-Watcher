@@ -2,7 +2,7 @@
 Cryptocurrency alert system that runs locally on your computer.
 
 ## Current features
-Notifies you if price is higher or lower than certain value (price in BTC also supported).
+Notifies you if price is higher or lower than certain value. Supports multiple markets and exchanges.
 Can look for update and update itself.
 
 ## How to install if you are a user
@@ -17,8 +17,16 @@ Replace AlarmSound.wav in program directory (usually in C:\Program Files (x86)\C
 Create or copy shortcut and paste it to C:\Users\USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
 ## To-do list
-1. Shorten timeframe between looking for price changes (currently it's 5 min).
-2. Add indicator alerts (e.g. RSI below 30).
-3. Add edit alert button.
-4. Email notifications.
-5. Watch section.
+1. Add indicator alerts (e.g. RSI below 30).
+2. Currency list.
+3. Watch section.
+4. Filter currencies by alert condition.
+5. Your portfolio calculator.
+6. Cryptocurrency converter calculator.
+7. Email notifications. 
+
+## Disclaimer
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
