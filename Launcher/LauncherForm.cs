@@ -46,10 +46,10 @@ namespace Launcher
         // where update file will be downloaded
         private string temp_zip = "tmp/Update.zip";
         private string name_of_program = "CryptoWatcher.exe";
-        // path to Version.txt file on internet
-        private string github_version_file = "https://github.com/Stock84-dev/Crypto-Watcher/raw/master/Version.txt";
-        // path to update file on internet
-        private string github_update_zip = "https://github.com/Stock84-dev/Crypto-Watcher/raw/master/Update.zip";
+		// path to Version.txt file on internet
+		private string github_version_file = "https://github.com/Stock84-dev/Crypto-Watcher/raw/v1.1/Version.txt";/*"https://github.com/Stock84-dev/Crypto-Watcher/raw/master/Version.txt";*/
+		// path to update file on internet
+		private string github_update_zip = "https://github.com/Stock84-dev/Crypto-Watcher/raw/v1.1/Update.zip";/* "https://github.com/Stock84-dev/Crypto-Watcher/raw/master/Update.zip";*/
 
         public LauncherForm()
         {
@@ -65,13 +65,13 @@ namespace Launcher
         // saving paths to file so it can be changed in the future
         private void LoadFilePaths()
         {
-            if (!File.Exists("Server.txt"))
-                return;
-            StreamReader sr = new StreamReader("Server.txt");
-            github_version_file = sr.ReadLine();
-            github_update_zip = sr.ReadLine();
-            sr.Close();
-        }
+			if (!File.Exists("Server.txt"))
+				return;
+			StreamReader sr = new StreamReader("Server.txt");
+			github_version_file = sr.ReadLine();
+			github_update_zip = sr.ReadLine();
+			sr.Close();
+		}
 
         private void LauncherForm_Load(object sender, EventArgs e)
         {
@@ -326,6 +326,7 @@ namespace Launcher
             instructions.Add(new Instruction(InstructionType.move, "tmp/CryptoWatcher.exe", "CryptoWatcher.exe"));
 			instructions.Add(new Instruction(InstructionType.move, "tmp/Newtonsoft.Json.dll", "Newtonsoft.Json.dll"));
 			instructions.Add(new Instruction(InstructionType.move, "tmp/Tulpep.NotificationWindow.dll", "Tulpep.NotificationWindow.dll"));
+			instructions.Add(new Instruction(InstructionType.delete, "tmp/CryptoWatcher.exe.config"));
 			instructions.Add(new Instruction(InstructionType.move, "tmp/CryptoWatcher.exe.config", "CryptoWatcher.exe.config"));
 			Save();
         }
