@@ -326,7 +326,7 @@ namespace Launcher
             instructions.Add(new Instruction(InstructionType.move, "tmp/CryptoWatcher.exe", "CryptoWatcher.exe"));
 			instructions.Add(new Instruction(InstructionType.move, "tmp/Newtonsoft.Json.dll", "Newtonsoft.Json.dll"));
 			instructions.Add(new Instruction(InstructionType.move, "tmp/Tulpep.NotificationWindow.dll", "Tulpep.NotificationWindow.dll"));
-			instructions.Add(new Instruction(InstructionType.delete, "tmp/CryptoWatcher.exe.config"));
+			instructions.Add(new Instruction(InstructionType.delete, "CryptoWatcher.exe.config"));
 			instructions.Add(new Instruction(InstructionType.move, "tmp/CryptoWatcher.exe.config", "CryptoWatcher.exe.config"));
 			Save();
         }
