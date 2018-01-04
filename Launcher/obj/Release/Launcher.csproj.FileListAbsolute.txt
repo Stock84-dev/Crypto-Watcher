@@ -10,3 +10,4 @@ D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Launcher\obj\Release\Lau
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Launcher\obj\Release\Launcher.csproj.CoreCompileInputs.cache
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Launcher\obj\Release\Launcher.exe
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Launcher\obj\Release\Launcher.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Launcher\obj\Release\Launcher.csprojResolveAssemblyReference.cache

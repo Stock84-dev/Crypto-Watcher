@@ -1,1 +1,2 @@
-1.0.0
+1.1.0
+Timeframe between updates is now shorter. Added notification window and settings for it. You can now specify which exchange to track on.
