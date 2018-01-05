@@ -155,6 +155,8 @@ namespace Launcher
             btnNo.Visible = false;
             txtBox.Visible = false;
             lbl1.Visible = false;
+			lblCurrentVersion.Visible = false;
+			lblNewVersion.Visible = false;
             lbl.AutoSize = false;
             lbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             lbl.Dock = DockStyle.Fill;

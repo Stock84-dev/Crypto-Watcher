@@ -53,8 +53,8 @@ namespace CryptoWatcher
 			InitializeComponent();
 			
 			PopulateTickersAsync();
-			//if (Alert.AssetList == null)
-			//	PopulateAssetsAsync();
+			if (Alert.AssetList == null)
+				PopulateAssetsAsync();
 		}
 
 		private void CustomAlertForm_VisibleChanged(object sender, EventArgs e)
