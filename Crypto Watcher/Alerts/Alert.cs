@@ -88,7 +88,7 @@ namespace Alerts
 		public async static Task UpdateTickerList()
 		{
 			Console.WriteLine($"Updating ticker list: {DateTime.Now}");
-			List<Ticker> tickers = await CoinMarketCapAPI.GetTickers(-1, -1);
+			List<Ticker> tickers;
 			while ((tickers = await CoinMarketCapAPI.GetTickers(-1, -1)) == null)
 				;
 			lock (door)
