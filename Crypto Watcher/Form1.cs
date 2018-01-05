@@ -72,7 +72,7 @@ using System.Globalization;
 // TODO: when there are more than 1 notification and user deletes the mw get indoex out of range exception because indexes got updated whe aler got deleted. Suggestion: remove id in grid view and add it to notification calsss when notification is deleted update id in all notificatons 
 namespace CryptoWatcher
 {
-	public partial class MainForm : MetroFramework.Forms.MetroForm, IFormReference
+	public partial class MainForm : MetroFramework.Forms.MetroForm
     {
         private bool show_baloonTip = true;
 		DataTable table = new DataTable();
@@ -85,7 +85,8 @@ namespace CryptoWatcher
 			ntfyIconMinimized.BalloonTipText = "Application minimized.";
 			LoadSettings();
 			tabControl.SelectedTab = tabAlert;
-			
+			Notification.MainForm = this;
+			CustomAlertForm.MainForm = this;
 			//Alerts.assets = CryptowatchAPI.GetAssets();
 			//StreamWriter sw = new StreamWriter("allowanceGetTrades.txt");
 			//	long max = long.MinValue;
@@ -175,6 +176,7 @@ namespace CryptoWatcher
 
 			await Alert.UpdateTickerList();
 			alert_timer.Enabled = true;
+			AlertTimerTick(null, null);
 		}
 
 		private void grdNotifications_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -244,12 +246,12 @@ namespace CryptoWatcher
 		#endregion
 		// ****************************************************** Timers ************************************************************** //
 		#region
+			// TODO: availible allowance is updated on 55 min
         private async void AlertTimerTick(object sender, EventArgs e)
         {
 			// if there aren't alerts we exit
 			if (Alert.AlertList.Count == 0)
 				return;
-			long average_costs;
 			// for all alerts we are testing condition and if condition is fullfilled we show message to notify user
 			DateTime currentTime = DateTime.Now;
 			for (int i = 0; i < Alert.AlertList.Count; i++)
@@ -259,28 +261,40 @@ namespace CryptoWatcher
 					Alert.AlertList[i].Notify(currentTime);
 				}
 			}
-			average_costs = Alert.GetAverageCosts();
-			long next_update_time;
-			if (average_costs != 0)
+			long maximumCosts = Alert.GetMaxCosts();
+			double next_update_time;
+			if (maximumCosts != 0)
 			{
 				// TODO: either use fixed amount or average costs for all functions that are triggered by user for reserve
 				// we are keeping some costs for reserve that equals to all costs that is used to one timer tick
-				long n_of_updates_left = (APIs.CryptowatchAPI.allowance.remaining - average_costs) / average_costs;
-				int minutes_left = 60 - DateTime.Now.Minute;
-				next_update_time = minutes_left / n_of_updates_left * 60000;
+				double n_of_updates_left = (APIs.CryptowatchAPI.allowance.remaining - maximumCosts) / maximumCosts * 1.5;
+				// cryptowat.ch allowance updates every hour on 55th minute
+				int minutes_left = 55 - DateTime.Now.Minute;
+				if (minutes_left <= 0)
+				{
+					minutes_left = 55 - minutes_left;
+				}
+				if (n_of_updates_left != 0)
+					next_update_time = minutes_left / n_of_updates_left * 60000;
+				else next_update_time = minutes_left * 60000;
 				// limiting to  second interval
 				if (next_update_time < 1000)
 					next_update_time = 1000;
+				Console.WriteLine($"Next update time: {next_update_time}, # updates left: {n_of_updates_left}, Remaining: {APIs.CryptowatchAPI.allowance.remaining}");
 			}
 			else next_update_time = 1000;
-
 			alert_timer.Interval = (int)next_update_time;
 			lblNextUpdate.Text = ((int)(next_update_time / 1000)).ToString() + "s";
+			Alert.CurrentCosts = 0;
 		}
 
 		private void CMCStartingTimer_Tick(object sender, EventArgs e)
 		{
-			if(DateTime.Now.Minute % 5 == 0)
+			//CMCTimer_Tick(null, null);
+			//CMCTimer.Enabled = true;
+			//CMCTimer.Interval = 6000;
+			//CMCStartingTimer.Enabled = false;
+			if (DateTime.Now.Minute % 5 == 0)
 			{
 				CMCTimer_Tick(null, null);
 				CMCTimer.Enabled = true;
@@ -296,13 +310,13 @@ namespace CryptoWatcher
 		#endregion
 		// ****************************************************** Notifications ******************************************************* //
 		#region
-		void IFormReference.ShowWindow()
+		public void ShowWindow()
 		{
 			Activate();
 			tabControl.SelectedTab = tabNotifications;
 		}
 
-		void IFormReference.AddMessage(int id)
+		public void AddMessage(int id)
 		{
 			bool found = false;
 			
@@ -327,7 +341,7 @@ namespace CryptoWatcher
 			}
 		}
 
-		void IFormReference.TryRemoveAlert(int id)
+		public void TryRemoveAlert(int id)
 		{
 			// if alert is one time only we delete it
 			if (Alert.AlertList[id].notification.Interval == -1)
@@ -338,15 +352,15 @@ namespace CryptoWatcher
 			}
 		}
 
-		void IFormReference.AddAlertToListView()
+		public void AddAlertToListView()
 		{
 			lstView.Items.Add(new ListViewItem(Alert.AlertList.Last().ToRow()));
 		}
 
 		// occurs when user clicks popup message
-		void IFormReference.Popup_Click(object sender, EventArgs e)
+		public void Popup_Click(object sender, EventArgs e)
 		{
-			((IFormReference)this).ShowWindow();
+			ShowWindow();
 		}
 
 		// occurs when you click on icon in system tray

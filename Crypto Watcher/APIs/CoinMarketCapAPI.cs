@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -30,7 +31,7 @@ namespace APIs
 				}
 				catch
 				{
-					throw;
+					return null;
 				}
 				// get JSON result objects into a list
 				List<JToken> jTokens = jObject.Children().ToList();
@@ -65,7 +66,7 @@ namespace APIs
 			}
 			catch
 			{
-				throw;
+				return null;
 			}
 			// get JSON result objects into a list
 			List<JToken> jTokens = jObject.Children().ToList();
@@ -96,7 +97,7 @@ namespace APIs
 			}
 			catch
 			{
-				throw;
+				return null;
 			}
 			GlobalData globalData = jObject.ToObject<GlobalData>();
 			if (quote != QuoteType.NONE)
@@ -149,6 +150,7 @@ namespace APIs
 				httpWebRequest.ContentType = "application/json";
 				httpWebRequest.Accept = "*/*";
 				httpWebRequest.Method = "GET";
+				httpWebRequest.Timeout = 99000;
 				//httpWebRequest.Headers.Add("Authorization", "Basic reallylongstring");
 				var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
 				return httpResponse.GetResponseStream();
@@ -157,6 +159,7 @@ namespace APIs
 			{
 				throw;
 			}
+			
 		}
 
 		public static string QuoteToString(QuoteType quote)

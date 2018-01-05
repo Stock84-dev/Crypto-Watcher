@@ -46,9 +46,9 @@ namespace Alerts
 		bool showWindowsMsg;
 		bool showWindow;
 		public int Interval { get; set; }
-		
-		IFormReference mainForm = (IFormReference)Application.OpenForms["MainForm"];
 
+		public static MainForm MainForm { get;  set; }
+		
 		public Notification(SoundType soundType, bool showWindowsMsg, bool showWindow, int interval = -1)
         {
 			Initialize();
@@ -94,9 +94,9 @@ namespace Alerts
 			}
 			if (showWindow)
 			{
-				mainForm.ShowWindow();
+				MainForm.ShowWindow();
 			}
-			mainForm.AddMessage(alertIndex);
+			MainForm.AddMessage(alertIndex);
 		}
 
 		public void StopNotifying(int alertIndex, bool tryRemovingAlert)
@@ -104,7 +104,7 @@ namespace Alerts
 			soundPlayer.Stop();
 			popup.Hide();
 			if(tryRemovingAlert)
-				mainForm.TryRemoveAlert(alertIndex);
+				MainForm.TryRemoveAlert(alertIndex);
 		}
 
 		public string ToLine()
@@ -127,7 +127,7 @@ namespace Alerts
 			popup.ContentHoverColor = Color.FromArgb(255, 0, 174, 219);
 			popup.ShowGrip = false;
 			popup.HeaderHeight = 6;
-			popup.Click += mainForm.Popup_Click;
+			popup.Click += MainForm.Popup_Click;
 		}
 	}
 }

@@ -43,6 +43,7 @@ namespace CryptoWatcher
 		string baseName;
 		string baseSymbol;
 		bool marketIsRunning;
+		public static MainForm MainForm { get; set; }
 		//List<Exchange> exchanges;
 		// these are only needed when price needs to be converted
 		//Dictionary<int, string> middleMarket;
@@ -52,8 +53,8 @@ namespace CryptoWatcher
 			InitializeComponent();
 			
 			PopulateTickersAsync();
-			if (Alert.AssetList == null)
-				PopulateAssetsAsync();
+			//if (Alert.AssetList == null)
+			//	PopulateAssetsAsync();
 		}
 
 		private void CustomAlertForm_VisibleChanged(object sender, EventArgs e)
@@ -392,7 +393,7 @@ namespace CryptoWatcher
 					break;
 			}
 			Alert.SaveAlerts();
-			((IFormReference)Application.OpenForms["MainForm"]).AddAlertToListView();
+			MainForm.AddAlertToListView();
 			Close();
 		}
 

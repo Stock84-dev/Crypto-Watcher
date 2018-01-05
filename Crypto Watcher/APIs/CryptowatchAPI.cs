@@ -20,8 +20,24 @@ namespace APIs
 		/// <summary>
 		/// Allowance is updated with every call.
 		/// </summary>
-		public static Allowance allowance = new Allowance();
-		private static readonly object door = new object();
+		private static Allowance _allowance = new Allowance();
+		public static Allowance allowance {
+			get {
+				return _allowance;
+			}
+			set {
+				_allowance = value;
+				OnAllowanceChanged(new AllowanceEventArgs(_allowance));
+			}
+		}
+		public delegate void AllowanceChangedEventHandler(object sender, AllowanceEventArgs e);
+		public static event AllowanceChangedEventHandler AllowanceChanged;
+
+		private static void OnAllowanceChanged(AllowanceEventArgs e)
+		{
+			if (AllowanceChanged != null)
+				AllowanceChanged(typeof(CryptowatchAPI), e);
+		}
 
 		public static class AverageCost
 		{
@@ -44,6 +60,27 @@ namespace APIs
 			public const int GetTrades = 6478083;
 		}
 
+		public static class MaximumCost
+		{
+			public const int GetAssets = 24794198;
+			public const int GetAsset = 295800527;
+			public const int GetCandlesticks = 72606033;
+			public const int GetExchanges = 1668110;
+			public const int GetExchange = 647960;
+			public const int GetMarkets = 6569475;
+			public const int GetMarkets1 = 1964170; // get exchange specific market
+			public const int GetMarket = 14665724;
+			public const int GetOrderBook = 330483278;
+			public const int GetPairs = 130313939;
+			public const int GetPair = 1674564;
+			public const int GetPrices = 35111505;
+			public const int GetPrice = 20712684;
+			public const int GetSiteInformation = 9831044;
+			public const int GetSummaries = 192400297;
+			public const int GetSummary = 338321144;
+			public const int GetTrades = 6478083;//error
+		}
+
 		///<summary>
 		///You can always request this to query your allowance without any extra result - this request costs very little.
 		/// </summary>
@@ -59,11 +96,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static SiteInformation GetSiteInformation()
+		public static async Task<SiteInformation> GetSiteInformation()
 		{
 			try
 			{
-				return Deserialize<SiteInformation>(GetJObject("https://api.cryptowat.ch"));
+				return Deserialize<SiteInformation>(await GetJObject("https://api.cryptowat.ch"));
 			}
 			catch
 			{
@@ -86,11 +123,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Task<List<Assets>> GetAssets()
+		public static async Task<List<Assets>> GetAssets()
 		{
 			try
 			{
-				return Task.Factory.StartNew(() => DeserializeToList<Assets>(GetJObject("https://api.cryptowat.ch/assets")));
+				return DeserializeToList<Assets>(await GetJObject("https://api.cryptowat.ch/assets"));
 			}
 			catch
 			{
@@ -115,11 +152,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Task<Asset> GetAsset(string route)
+		public static async Task<Asset> GetAsset(string route)
 		{
 			try
 			{
-				return Task.Factory.StartNew(() => Deserialize<Asset>(GetJObject(route)));
+				return Deserialize<Asset>(await GetJObject(route));
 			}
 			catch
 			{
@@ -142,11 +179,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static List<Pairs> GetPairs()
+		public static async Task<List<Pairs>> GetPairs()
 		{
 			try
 			{
-				return DeserializeToList<Pairs>(GetJObject("https://api.cryptowat.ch/pairs"));
+				return DeserializeToList<Pairs>(await GetJObject("https://api.cryptowat.ch/pairs"));
 			}
 			catch
 			{
@@ -170,11 +207,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Task<Pair> GetPair(string route)
+		public static async Task<Pair> GetPair(string route)
 		{
 			try
 			{
-				return Task.Factory.StartNew(() => Deserialize<Pair>(GetJObject(route)));
+				return Deserialize<Pair>(await GetJObject(route));
 			}
 			catch
 			{
@@ -197,11 +234,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static List<Exchanges> GetExchanges()
+		public static async Task<List<Exchanges>> GetExchanges()
 		{
 			try
 			{
-				return DeserializeToList<Exchanges>(GetJObject("https://api.cryptowat.ch/exchanges"));
+				return DeserializeToList<Exchanges>(await GetJObject("https://api.cryptowat.ch/exchanges"));
 			}
 			catch
 			{
@@ -225,11 +262,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Task<Exchange> GetExchange(string route)
+		public static async Task<Exchange> GetExchange(string route)
 		{
 			try
 			{
-				return Task.Factory.StartNew(() => Deserialize<Exchange>(GetJObject(route)));
+				return Deserialize<Exchange>(await GetJObject(route));
 			}
 			catch
 			{
@@ -253,11 +290,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static List<Markets> GetMarkets(string route = "https://api.cryptowat.ch/markets")
+		public static async Task<List<Markets>> GetMarkets(string route = "https://api.cryptowat.ch/markets")
 		{
 			try
 			{
-				return DeserializeToList<Markets>(GetJObject(route));
+				return DeserializeToList<Markets>(await GetJObject(route));
 			}
 			catch
 			{
@@ -281,11 +318,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Market GetMarket(string route)
+		public static async Task<Market> GetMarket(string route)
 		{
 			try
 			{
-				return Deserialize<Market>(GetJObject(route));
+				return Deserialize<Market>(await GetJObject(route));
 			}
 			catch
 			{
@@ -312,11 +349,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Dictionary<string, float> GetPrices()
+		public static async Task<Dictionary<string, float>> GetPrices()
 		{
 			try
 			{
-				return Deserialize<Dictionary<string, float>>(GetJObject("https://api.cryptowat.ch/markets/prices"));
+				return Deserialize<Dictionary<string, float>>(await GetJObject("https://api.cryptowat.ch/markets/prices"));
 			}
 			catch
 			{
@@ -340,11 +377,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Task<float> GetPrice(string route)
+		public async static Task<float> GetPrice(string route)
 		{
 			try
 			{
-				return Task.Factory.StartNew(() => Deserialize<Price>(GetJObject(route)).price);
+				return Deserialize<Price>(await GetJObject(route)).price;
 			}
 			catch
 			{
@@ -371,11 +408,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Dictionary<string, Summary> GetSummaries()
+		public static async Task<Dictionary<string, Summary>> GetSummaries()
 		{
 			try
 			{
-				return Deserialize<Dictionary<string, Summary>>(GetJObject("https://api.cryptowat.ch/markets/summaries"));
+				return Deserialize<Dictionary<string, Summary>>(await GetJObject("https://api.cryptowat.ch/markets/summaries"));
 			}
 			catch
 			{
@@ -399,11 +436,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static Summary GetSummary(string route)
+		public static async Task<Summary> GetSummary(string route)
 		{
 			try
 			{
-				return Deserialize<Summary>(GetJObject(route));
+				return Deserialize<Summary>(await GetJObject(route));
 			}
 			catch
 			{
@@ -429,7 +466,7 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static List<Trade> GetTrades(string route, int limit = 50, long since = -1)
+		public static async Task<List<Trade>> GetTrades(string route, int limit = 50, long since = -1)
 		{
 			if (limit != 50 && since != -1)
 			{
@@ -445,7 +482,7 @@ namespace APIs
 			}
 			try
 			{
-				List<float[]> tradeList = DeserializeToList<float[]>(GetJObject(route));
+				List<float[]> tradeList = DeserializeToList<float[]>(await GetJObject(route));
 				List<Trade> trades = new List<Trade>();
 				foreach (var t in tradeList)
 				{
@@ -475,11 +512,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static OrderBook GetOrderBook(string route)
+		public static async Task<OrderBook> GetOrderBook(string route)
 		{
 			try
 			{
-				_OrderBook _orderBook = Deserialize<_OrderBook>(GetJObject(route));
+				_OrderBook _orderBook = Deserialize<_OrderBook>(await GetJObject(route));
 				OrderBook orderBook = new OrderBook();
 				foreach (var bid in _orderBook.bids)
 				{
@@ -516,7 +553,7 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public static List<Candlestick> GetCandlesticks(string route, TimeFrame timeFrame, long after = -2, long before = 0)
+		public static async Task<List<Candlestick>> GetCandlesticks(string route, TimeFrame timeFrame, long after = -2, long before = 0)
 		{
 			route += "?periods=" + ((int)timeFrame).ToString();
 			if (after != -2)
@@ -529,7 +566,7 @@ namespace APIs
 			}
 			try
 			{
-			 	_Candlestick _candlestick = Deserialize<_Candlestick>(GetJObject(route));
+			 	_Candlestick _candlestick = Deserialize<_Candlestick>(await GetJObject(route));
 				List<Candlestick> candles = new List<Candlestick>();
 				foreach (var c in _candlestick.allCandlesticks)
 				{
@@ -552,7 +589,7 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		private static Stream GetResponseStream(string url)
+		private static async Task<Stream> GetResponseStream(string url)
 		{
 			try
 			{
@@ -561,7 +598,8 @@ namespace APIs
 				httpWebRequest.Accept = "*/*";
 				httpWebRequest.Method = "GET";
 				//httpWebRequest.Headers.Add("Authorization", "Basic reallylongstring");
-				var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+				//var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+				var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
 				return httpResponse.GetResponseStream();
 			}
 			catch
@@ -583,11 +621,11 @@ namespace APIs
 		/// <exception cref="ProtocolViolationException"></exception>
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		private static JObject GetJObject(string url)
+		private static async Task<JObject> GetJObject(string url)
 		{
 			try
 			{
-				StreamReader sr = new StreamReader(GetResponseStream(url));
+				StreamReader sr = new StreamReader(await GetResponseStream(url));
 				string response = sr.ReadToEnd();
 				JObject jObject = JObject.Parse(response);
 				sr.Close();
@@ -624,10 +662,7 @@ namespace APIs
 				}
 				// get JSON result objects into a list
 				List<JToken> jTokens = jObject["result"].Children().ToList();
-				lock (door)
-				{
-					allowance = jObject["allowance"].ToObject<Allowance>();
-				}
+				allowance = jObject["allowance"].ToObject<Allowance>();
 
 				// serialize JSON results into .NET objects
 				List<T> objects = new List<T>();
@@ -667,10 +702,8 @@ namespace APIs
 					if (responseType.Key == "error")
 						throw new Exception("Cryptowatch error: " + responseType.Value.ToObject<string>());
 				}
-				lock (door)
-				{
-					allowance = jObject["allowance"].ToObject<Allowance>();
-				}
+				allowance = jObject["allowance"].ToObject<Allowance>();
+
 				return jObject["result"].ToObject<T>();
 			}
 			catch
