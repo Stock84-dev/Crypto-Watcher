@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 namespace APIs
 {
@@ -257,5 +258,14 @@ namespace APIs
 	{
 		public long cost { get; set; }
 		public long remaining { get; set; } = 8000000000;
+	}
+
+	public class AllowanceEventArgs : EventArgs
+	{
+		public Allowance allowance { get; set; }
+		public AllowanceEventArgs(Allowance allowance)
+		{
+			this.allowance = allowance;
+		}
 	}
 }

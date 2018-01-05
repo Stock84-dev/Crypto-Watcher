@@ -27,7 +27,7 @@ namespace Alerts
 		public abstract Task<bool> Test();
 		public abstract string[] ToRow();
 		public abstract string Message { get; }
-		public abstract int GetAverageCost();
+		public abstract long GetMaxCosts();
 
 		public void Notify(DateTime currentTime)
 		{

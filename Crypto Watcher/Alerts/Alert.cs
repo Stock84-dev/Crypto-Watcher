@@ -40,6 +40,7 @@ namespace Alerts
 		public static List<AbstractAlert> AlertList { get; set; } = new List<AbstractAlert>();
 		public static List<Assets> AssetList { get; set; } = null;
 		public static List<Ticker> TickerList { get; set; } = null;
+		public static long CurrentCosts { get; set; }
 		private static readonly object door = new object();
 		
 		// saves all alerts
@@ -55,6 +56,7 @@ namespace Alerts
 		// loads all alerts
 		public static void LoadAlerts()
 		{
+			CryptowatchAPI.AllowanceChanged += CryptowatchAPI_AllowanceChanged;
 			if (!File.Exists(save_path))
 				return;
 			StreamReader sr = new StreamReader(save_path);
@@ -64,23 +66,31 @@ namespace Alerts
 				AlertList.Add(AbstractAlert.FromLine(line));
 			}
 		}
-		// gets average cost (allowance API) for all alerts
-		public static long GetAverageCosts()
+
+		private static void CryptowatchAPI_AllowanceChanged(object sender, AllowanceEventArgs e)
 		{
-			long average_costs = 0;
+			CurrentCosts += e.allowance.cost;
+		}
+
+		// gets average cost (allowance API) for all alerts
+		public static long GetMaxCosts()
+		{
+			long maxCosts = 0;
 
 			foreach (var alert in AlertList)
 			{
-				average_costs += alert.GetAverageCost();
+				maxCosts += alert.GetMaxCosts();
 			}
 
-			return average_costs;
+			return maxCosts;
 		}
 
 		public async static Task UpdateTickerList()
 		{
 			Console.WriteLine($"Updating ticker list: {DateTime.Now}");
 			List<Ticker> tickers = await CoinMarketCapAPI.GetTickers(-1, -1);
+			while ((tickers = await CoinMarketCapAPI.GetTickers(-1, -1)) == null)
+				;
 			lock (door)
 			{
 				TickerList = tickers;
@@ -103,7 +113,6 @@ namespace Alerts
 				}
 			});
 		}
-
 
 	}
 
@@ -207,9 +216,9 @@ namespace Alerts
 		}
 
 		// sums all average costs (allowance API) of API functions that this alert is using 
-		public override int GetAverageCost()
+		public override long GetMaxCosts()
 		{
-			return CryptowatchAPI.AverageCost.GetPrice;
+			return CryptowatchAPI.MaximumCost.GetPrice;
 		}
 
 		string ConditionToString()
