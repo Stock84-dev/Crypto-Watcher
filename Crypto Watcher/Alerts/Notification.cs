@@ -1,7 +1,7 @@
 ﻿/******************************************************************************
  * CRYPTO WATCHER - cryptocurrency alert system that notifies you when certain 
  * cryptocurrency fulfills your condition.
- * Copyright (c) 2017 Stock84-dev
+ * Copyright (c) 2017-2018 Stock84-dev
  * https://github.com/Stock84-dev/Crypto-Watcher
  *
  * This file is part of CRYPTO WATCHER.
@@ -34,7 +34,7 @@ using System.Media;
 using Tulpep.NotificationWindow;
 using CryptoWatcher;
 
-namespace Alerts
+namespace CryptoWatcher.Alerts
 {
 	public class Notification
     {
@@ -45,8 +45,9 @@ namespace Alerts
 		SoundType sound;
 		bool showWindowsMsg;
 		bool showWindow;
+		// wait period after alert is triggered
 		public int Interval { get; set; }
-
+        // reference to main form to display notifications
 		public static MainForm MainForm { get;  set; }
 		
 		public Notification(SoundType soundType, bool showWindowsMsg, bool showWindow, int interval = -1)
@@ -73,10 +74,10 @@ namespace Alerts
 			Interval = int.Parse(data.Substring(0, (i = data.IndexOf(';'))));
 			data = data.Substring(i + 1);
 		}
-
+        // notifies user based on alert settings
 		public void Notify(int alertIndex)
         {
-			if (Settings.Default.playSound)
+			if (Settings.Default.PlaySound)
 			{
 				switch (sound)
 				{
@@ -89,7 +90,7 @@ namespace Alerts
 
 			if (showWindowsMsg)
 			{
-				popup.ContentText = Alert.AlertList[alertIndex].Message;
+				popup.ContentText = AbstractAlert.alerts[alertIndex].Message;
 				popup.Popup();
 			}
 			if (showWindow)
@@ -107,12 +108,9 @@ namespace Alerts
 				MainForm.TryRemoveAlert(alertIndex);
 		}
 
-		public string ToLine()
+		public override string ToString()
 		{
-			return ((int)sound).ToString() + ";" +
-				Convert.ToInt32(showWindowsMsg).ToString() + ";" +
-				Convert.ToInt32(showWindow).ToString() + ";" +
-				Interval.ToString() + ";";
+			return $"{(int)sound};{Convert.ToInt32(showWindowsMsg)};{Convert.ToInt32(showWindow)};{Interval}";
 		}
 
 		public enum SoundType { looping, sound, noSound};

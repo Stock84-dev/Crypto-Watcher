@@ -1,4 +1,26 @@
-﻿using Newtonsoft.Json;
+﻿/******************************************************************************
+ * CRYPTO WATCHER - cryptocurrency alert system that notifies you when certain 
+ * cryptocurrency fulfills your condition.
+ * Copyright (c) 2017-2018 Stock84-dev
+ * https://github.com/Stock84-dev/Crypto-Watcher
+ *
+ * This file is part of CRYPTO WATCHER.
+ *
+ * CRYPTO WATCHER is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CRYPTO WATCHER is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with CRYPTO WATCHER.  If not, see <http://www.gnu.org/licenses/>.
+ *****************************************************************************/
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -7,241 +29,303 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace APIs
+namespace CryptoWatcher.APIs
 {
-	class CoinMarketCapAPI
-	{
-		public static Task<List<Ticker>> GetTickers(int start = 1, int limit = 100, QuoteType quote = QuoteType.NONE)
-		{
-			return Task.Factory.StartNew(() =>
-			{
-				JToken jObject;
-				string endpoint = "";
-				if (start != 1)
-					endpoint += $"start={start}&";
-				if (limit != 100)
-					endpoint += $"limit={limit}&";
-				if (quote != QuoteType.NONE)
-					endpoint += $"convert={QuoteToString(quote)}";
-				try
-				{
-					jObject = GetJToken("https://api.coinmarketcap.com/v1/ticker/?" + endpoint);
-				}
-				catch
-				{
-					return null;
-				}
-				// get JSON result objects into a list
-				List<JToken> jTokens = jObject.Children().ToList();
-				// serialize JSON results into .NET objects
-				List<Ticker> tickers = new List<Ticker>();
-				foreach (JToken jToken in jTokens)
-				{
-					// JToken.ToObject is a helper method that uses JsonSerializer internally
-					tickers.Add(jToken.ToObject<Ticker>());
-					if (quote != QuoteType.NONE)
-					{
-						tickers[tickers.Count - 1].ConvertedPrice = jToken[$"price_{QuoteToString(quote)}"].ToObject<string>();
-						tickers[tickers.Count - 1].Converted24hVolume = jToken[$"24h_volume_{QuoteToString(quote)}"].ToObject<string>();
-						tickers[tickers.Count - 1].ConvertedMarketCap = jToken[$"market_cap_{QuoteToString(quote)}"].ToObject<string>();
-						tickers[tickers.Count - 1].Quote = quote;
-					}
-				}
-				return tickers;
-			});
-		}
+    // NOTE: sometimes the server is overloaded and timeout error could happen
+    class CoinMarketCapAPI : AbstractAPI
+    {
+        public const string Name = "CoinMarketCap";
+        static List<Ticker> tickerList = null;
+        static System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+        static System.Windows.Forms.Timer startingTimer = new System.Windows.Forms.Timer();
 
-		public static Ticker GetTicker(string id, QuoteType quote = QuoteType.NONE)
-		{
-			string endpoint = id + "/";
+        public override bool SupportsCandles {
+            get {
+                return false;
+            }
+        }
 
-			JToken jObject;
-			if (quote != QuoteType.NONE)
-				endpoint += $"?convert={QuoteToString(quote)}";
-			try
-			{
-				jObject = GetJToken("https://api.coinmarketcap.com/v1/ticker/" + endpoint);
-			}
-			catch
-			{
-				return null;
-			}
-			// get JSON result objects into a list
-			List<JToken> jTokens = jObject.Children().ToList();
-			// serialize JSON results into .NET objects
-			Ticker ticker = jTokens[0].ToObject<Ticker>(); ;
+        public CoinMarketCapAPI()
+        {
+            if (tickerList == null && startingTimer.Enabled == false)
+            {
+                Start();
+            }
+        }
 
-			if (quote != QuoteType.NONE)
-			{
-				ticker.ConvertedPrice = jTokens[0][$"price_{QuoteToString(quote)}"].ToObject<string>();
-				ticker.Converted24hVolume = jTokens[0][$"24h_volume_{QuoteToString(quote)}"].ToObject<string>();
-				ticker.ConvertedMarketCap = jTokens[0][$"market_cap_{QuoteToString(quote)}"].ToObject<string>();
-				ticker.Quote = quote;
-			}
+        public static async Task<List<Ticker>> GetTickerList()
+        {
+            await WaitForInit();
+            return tickerList;
+        }
 
-			return ticker;
-		}
+        public void Start()
+        {
+            timer.Interval = 300000;
+            timer.Tick += Timer_Tick;
+            Timer_Tick(null, null);
+            if (DateTime.Now.Minute % 5 != 0)
+            {
+                startingTimer.Interval = 1000;
+                startingTimer.Tick += StartingTimer_Tick;
+                startingTimer.Enabled = true;
+            }
+            else timer.Enabled = true;
+        }
 
-		public static GlobalData GetGlobalData(QuoteType quote = QuoteType.NONE)
-		{
-			string endpoint = "";
-			JObject jObject;
+        protected override void PriceUnsubscribe(string baseSymbol, string quoteSymbol, Action<object[]> action)
+        {
+			string key = $"{Name};{baseSymbol};{quoteSymbol}";
+			priceSubscription.RemoveEvent(key, action);
+			if(!priceSubscription.ContainsKey(key))
+				priceSubscription.Remove(key);
+        }
 
-			if (quote != QuoteType.NONE)
-				endpoint += $"?convert={QuoteToString(quote)}";
-			try
-			{
-				jObject = GetJObject("https://api.coinmarketcap.com/v1/global/" + endpoint);
-			}
-			catch
-			{
-				return null;
-			}
-			GlobalData globalData = jObject.ToObject<GlobalData>();
-			if (quote != QuoteType.NONE)
-			{
-				globalData.Converted24hVolume = jObject[$"total_24h_volume_{QuoteToString(quote)}"].ToObject<float>();
-				globalData.ConvertedMarketCap = jObject[$"total_market_cap_{QuoteToString(quote)}"].ToObject<float>();
-				globalData.Quote = quote;
-			}
-			return globalData;
-		}
+        protected override void PriceSubscribe(string baseSymbol, string quoteSymbol, Action<object[]> action)
+        {
+			string key = $"{Name};{baseSymbol};{quoteSymbol}";
 
-		private static JObject GetJObject(string url)
-		{
-			try
-			{
-				StreamReader sr = new StreamReader(GetResponseStream(url));
-				string response = sr.ReadToEnd();
-				JObject jObject = JObject.Parse(response);
-				sr.Close();
-				return jObject;
-			}
-			catch
-			{
-				throw;
-			}
-		}
+			if (!priceSubscription.ContainsKey(key))
+                priceSubscription.CreateEventForKey(key);
+            priceSubscription.EventForKey(key).Add(action);
+            foreach (var t in tickerList)
+            {
+                if (t.symbol == baseSymbol)
+                {
+                    if (quoteSymbol == "USD")
+                        priceSubscription.OnEventForKey(Name + baseSymbol + quoteSymbol, new object[] { t.price_usd });
+                    else
+                        priceSubscription.OnEventForKey(Name + baseSymbol + quoteSymbol, new object[] { t.price_btc });
+                }
+            }
+        }
 
-		private static JToken GetJToken(string url)
-		{
-			try
-			{
-				StreamReader sr = new StreamReader(GetResponseStream(url));
-				string response = sr.ReadToEnd();
-				JToken jToken = JToken.Parse(response);
-				sr.Close();
-				return jToken;
-			}
-			catch
-			{
-				throw;
-			}
-		}
+        public override List<QuoteSymbol> GetQuoteSymbols(string a = null, string b = null)
+        {
+            return new List<QuoteSymbol>(3)
+            {
+                new QuoteSymbol(Name, "USD"),
+                new QuoteSymbol(Name, "BTC")
+            };
+        }
 
+        private void StartingTimer_Tick(object sender, EventArgs e)
+        {
+            if (DateTime.Now.Minute % 5 == 0)
+            {
+                startingTimer.Enabled = false;
+                timer.Enabled = true;
+                Timer_Tick(null, null);
+            }
+        }
 
-		private static Stream GetResponseStream(string url)
-		{
-			try
-			{
-				var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-				httpWebRequest.ContentType = "application/json";
-				httpWebRequest.Accept = "*/*";
-				httpWebRequest.Method = "GET";
-				httpWebRequest.Timeout = 99000;
-				//httpWebRequest.Headers.Add("Authorization", "Basic reallylongstring");
-				var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-				return httpResponse.GetResponseStream();
-			}
-			catch
-			{
-				throw;
-			}
-			
-		}
+        private async void Timer_Tick(object sender, EventArgs e)
+        {
+            Console.WriteLine($"{DateTime.Now} downloading tickers.");
+            tickerList = await GetTickers(0);
+            Console.WriteLine($"{DateTime.Now} finished downloading tickers.");
 
-		public static string QuoteToString(QuoteType quote)
-		{
-			switch (quote)
-			{
-				case QuoteType.AUD: return "aud";
-				case QuoteType.BRL: return "brl";
-				case QuoteType.CAD: return "cad";
-				case QuoteType.CHF: return "chf";
-				case QuoteType.CLP: return "clp";
-				case QuoteType.CNY: return "cny";
-				case QuoteType.CZK: return "czk";
-				case QuoteType.DKK: return "dkk";
-				case QuoteType.EUR: return "eur";
-				case QuoteType.GBP: return "gbp";
-				case QuoteType.HKD: return "hkd";
-				case QuoteType.HUF: return "huf";
-				case QuoteType.IDR: return "idr";
-				case QuoteType.ILS: return "ils";
-				case QuoteType.INR: return "inr";
-				case QuoteType.JPY: return "jpy";
-				case QuoteType.KRW: return "krw";
-				case QuoteType.MXN: return "mxn";
-				case QuoteType.MYR: return "myr";
-				case QuoteType.NOK: return "nok";
-				case QuoteType.NZD: return "nzd";
-				case QuoteType.PHP: return "php";
-				case QuoteType.PKR: return "pkr";
-				case QuoteType.PLN: return "pln";
-				case QuoteType.RUB: return "rub";
-				case QuoteType.SEK: return "sek";
-				case QuoteType.SGD: return "sgd";
-				case QuoteType.THB: return "thb";
-				case QuoteType.TRY: return "try";
-				case QuoteType.TWD: return "twd";
-				case QuoteType.ZAR: return "zar";
-				default:
-					return null;
-			}
-		}
-	}
+            foreach (var t in tickerList)
+            {
+                if (priceSubscription.ContainsKey(Name + t.symbol + "USD"))
+                    priceSubscription.OnEventForKey(Name + t.name + t.symbol, new object[] { t.price_usd });
+                if (priceSubscription.ContainsKey(Name + t.symbol + "BTC"))
+                    priceSubscription.OnEventForKey(Name + t.name + t.symbol, new object[] { t.price_btc });
+            }
+        }
 
-	enum QuoteType { NONE, AUD, BRL, CAD, CHF, CLP, CNY, CZK, DKK, EUR, GBP, HKD, HUF, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PKR, PLN, RUB, SEK, SGD, THB, TRY, TWD, ZAR }
+        private async static Task WaitForInit()
+        {
+            if (tickerList == null)
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    while (tickerList == null)
+                        Thread.Sleep(10);
+                });
+            }
+        }
 
-	class Ticker
-	{
-		public QuoteType Quote { get; set; } = QuoteType.NONE;
-		public string id { get; set; }
-		public string name { get; set; }
-		public string symbol { get; set; }
-		public string rank { get; set; }
-		public string price_usd { get; set; }
-		public string price_btc { get; set; }
-		[JsonProperty("24h_volume_usd")]
-		public string _24h_volume_usd { get; set; }
-		public string market_cap_usd { get; set; }
-		public string available_supply { get; set; }
-		public string total_supply { get; set; }
-		public string max_supply { get; set; }
-		public string percent_change_1h { get; set; }
-		public string percent_change_24h { get; set; }
-		public string percent_change_7d { get; set; }
-		public string last_updated { get; set; }
-		public string ConvertedPrice { get; set; } = null;
-		public string Converted24hVolume { get; set; } = null;
-		public string ConvertedMarketCap { get; set; } = null;
-	}
+        public async Task<List<Ticker>> GetTickers(int limit = 100, int start = 1, QuoteType quote = QuoteType.NONE)
+        {
+            JToken jObject;
+            List<string> param = new List<string>();
+            if (limit != 100)
+                param.Add($"limit={limit}");
+            if (start != 1)
+                param.Add($"start={start}");
+            if (quote != QuoteType.NONE)
+                param.Add($"convert={QuoteToString(quote)}");
 
-	class GlobalData
-	{
-		public QuoteType Quote { get; set; } = QuoteType.NONE;
-		public float total_market_cap_usd { get; set; }
-		public float total_24h_volume_usd { get; set; }
-		public float bitcoin_percentage_of_market_cap { get; set; }
-		public int active_currencies { get; set; }
-		public int active_assets { get; set; }
-		public int active_markets { get; set; }
-		public int last_updated { get; set; }
-		public float Converted24hVolume { get; set; } = -1;
-		public float ConvertedMarketCap { get; set; } = -1;
-	}
+            try
+            {
+                jObject = await GetJToken("https://api.coinmarketcap.com/v1/ticker" + GetEndpoint(param));
+            }
+            catch (TimeoutException)
+            {
+                return await GetTickers(limit, start, quote);
+            }
+            // get JSON result objects into a list
+            List<JToken> jTokens = jObject.Children().ToList();
+            // serialize JSON results into .NET objects
+            List<Ticker> tickers = new List<Ticker>();
+            foreach (JToken jToken in jTokens)
+            {
+                // JToken.ToObject is a helper method that uses JsonSerializer internally
+                tickers.Add(jToken.ToObject<Ticker>());
+                if (quote != QuoteType.NONE)
+                {
+                    tickers[tickers.Count - 1].ConvertedPrice = jToken[$"price_{QuoteToString(quote)}"].ToObject<string>();
+                    tickers[tickers.Count - 1].Converted24hVolume = jToken[$"24h_volume_{QuoteToString(quote)}"].ToObject<string>();
+                    tickers[tickers.Count - 1].ConvertedMarketCap = jToken[$"market_cap_{QuoteToString(quote)}"].ToObject<string>();
+                    tickers[tickers.Count - 1].Quote = quote;
+                }
+            }
+            return tickers;
+        }
+
+        public async Task<Ticker> GetTicker(string id, QuoteType quote = QuoteType.NONE)
+        {
+            string endpoint = id + "/";
+
+            JToken jObject;
+            if (quote != QuoteType.NONE)
+                endpoint += $"?convert={QuoteToString(quote)}";
+            try
+            {
+                jObject = await GetJToken("https://api.coinmarketcap.com/v1/ticker/" + endpoint);
+            }
+            catch
+            {
+                return null;
+            }
+            // get JSON result objects into a list
+            List<JToken> jTokens = jObject.Children().ToList();
+            // serialize JSON results into .NET objects
+            Ticker ticker = jTokens[0].ToObject<Ticker>(); ;
+
+            if (quote != QuoteType.NONE)
+            {
+                ticker.ConvertedPrice = jTokens[0][$"price_{QuoteToString(quote)}"].ToObject<string>();
+                ticker.Converted24hVolume = jTokens[0][$"24h_volume_{QuoteToString(quote)}"].ToObject<string>();
+                ticker.ConvertedMarketCap = jTokens[0][$"market_cap_{QuoteToString(quote)}"].ToObject<string>();
+                ticker.Quote = quote;
+            }
+
+            return ticker;
+        }
+
+        public async Task<GlobalData> GetGlobalData(QuoteType quote = QuoteType.NONE)
+        {
+            string endpoint = "";
+            JObject jObject;
+
+            if (quote != QuoteType.NONE)
+                endpoint += $"?convert={QuoteToString(quote)}";
+            try
+            {
+                jObject = await GetJObject("https://api.coinmarketcap.com/v1/global/" + endpoint);
+            }
+            catch
+            {
+                return null;
+            }
+            GlobalData globalData = jObject.ToObject<GlobalData>();
+            if (quote != QuoteType.NONE)
+            {
+                globalData.Converted24hVolume = jObject[$"total_24h_volume_{QuoteToString(quote)}"].ToObject<float>();
+                globalData.ConvertedMarketCap = jObject[$"total_market_cap_{QuoteToString(quote)}"].ToObject<float>();
+                globalData.Quote = quote;
+            }
+            return globalData;
+        }
+
+        public static string QuoteToString(QuoteType quote)
+        {
+            switch (quote)
+            {
+                case QuoteType.AUD: return "aud";
+                case QuoteType.BRL: return "brl";
+                case QuoteType.CAD: return "cad";
+                case QuoteType.CHF: return "chf";
+                case QuoteType.CLP: return "clp";
+                case QuoteType.CNY: return "cny";
+                case QuoteType.CZK: return "czk";
+                case QuoteType.DKK: return "dkk";
+                case QuoteType.EUR: return "eur";
+                case QuoteType.GBP: return "gbp";
+                case QuoteType.HKD: return "hkd";
+                case QuoteType.HUF: return "huf";
+                case QuoteType.IDR: return "idr";
+                case QuoteType.ILS: return "ils";
+                case QuoteType.INR: return "inr";
+                case QuoteType.JPY: return "jpy";
+                case QuoteType.KRW: return "krw";
+                case QuoteType.MXN: return "mxn";
+                case QuoteType.MYR: return "myr";
+                case QuoteType.NOK: return "nok";
+                case QuoteType.NZD: return "nzd";
+                case QuoteType.PHP: return "php";
+                case QuoteType.PKR: return "pkr";
+                case QuoteType.PLN: return "pln";
+                case QuoteType.RUB: return "rub";
+                case QuoteType.SEK: return "sek";
+                case QuoteType.SGD: return "sgd";
+                case QuoteType.THB: return "thb";
+                case QuoteType.TRY: return "try";
+                case QuoteType.TWD: return "twd";
+                case QuoteType.ZAR: return "zar";
+                default:
+                    return null;
+            }
+        }
+
+        protected override void CandleSubscribe(string baseSymbol, string quoteSymbol, Timeframe timeframe, int length, Action<object[]> action) { }
+        protected override void CandleUnsubscribe(string baseSymbol, string quoteSymbol, Timeframe timeframe, Action<object[]> action) { }
+    }
+
+    public enum QuoteType { NONE, AUD, BRL, CAD, CHF, CLP, CNY, CZK, DKK, EUR, GBP, HKD, HUF, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PKR, PLN, RUB, SEK, SGD, THB, TRY, TWD, ZAR }
+
+    public class Ticker
+    {
+        public QuoteType Quote { get; set; } = QuoteType.NONE;
+        public string id { get; set; }
+        public string name { get; set; }
+        public string symbol { get; set; }
+        public string rank { get; set; }
+        public string price_usd { get; set; }
+        public string price_btc { get; set; }
+        [JsonProperty("24h_volume_usd")]
+        public string _24h_volume_usd { get; set; }
+        public string market_cap_usd { get; set; }
+        public string available_supply { get; set; }
+        public string total_supply { get; set; }
+        public string max_supply { get; set; }
+        public string percent_change_1h { get; set; }
+        public string percent_change_24h { get; set; }
+        public string percent_change_7d { get; set; }
+        public string last_updated { get; set; }
+        public string ConvertedPrice { get; set; } = null;
+        public string Converted24hVolume { get; set; } = null;
+        public string ConvertedMarketCap { get; set; } = null;
+    }
+
+    class GlobalData
+    {
+        public QuoteType Quote { get; set; } = QuoteType.NONE;
+        public float total_market_cap_usd { get; set; }
+        public float total_24h_volume_usd { get; set; }
+        public float bitcoin_percentage_of_market_cap { get; set; }
+        public int active_currencies { get; set; }
+        public int active_assets { get; set; }
+        public int active_markets { get; set; }
+        public int last_updated { get; set; }
+        public float Converted24hVolume { get; set; } = -1;
+        public float ConvertedMarketCap { get; set; } = -1;
+    }
 }
 
 
