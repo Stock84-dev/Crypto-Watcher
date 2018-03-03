@@ -1,1 +1,1 @@
-{"Name":"1.0.0-alpha.2","Changelog":"Testing new launcher.","Id":0}
+{"Name":"1.0.0-alpha.2","Changelog":"Testing new launcher.","Id":1}

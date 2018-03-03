@@ -48,6 +48,8 @@ namespace CryptoWatcher.Launcher
 		{
 			InitializeComponent();
 
+			MessageBox.Show("This is an updated version.");
+
 			if (Directory.Exists(tmpDownloadPath))
 				Directory.Delete(tmpDownloadPath);
 
