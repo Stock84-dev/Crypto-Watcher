@@ -116,18 +116,18 @@
 			this.lblCurrentVersion.AutoSize = true;
 			this.lblCurrentVersion.Location = new System.Drawing.Point(20, 62);
 			this.lblCurrentVersion.Name = "lblCurrentVersion";
-			this.lblCurrentVersion.Size = new System.Drawing.Size(132, 19);
+			this.lblCurrentVersion.Size = new System.Drawing.Size(129, 19);
 			this.lblCurrentVersion.TabIndex = 7;
-			this.lblCurrentVersion.Text = "Current version: 1.0.0";
+			this.lblCurrentVersion.Text = "Current version: N/A";
 			// 
 			// lblNewVersion
 			// 
 			this.lblNewVersion.AutoSize = true;
 			this.lblNewVersion.Location = new System.Drawing.Point(20, 81);
 			this.lblNewVersion.Name = "lblNewVersion";
-			this.lblNewVersion.Size = new System.Drawing.Size(114, 19);
+			this.lblNewVersion.Size = new System.Drawing.Size(111, 19);
 			this.lblNewVersion.TabIndex = 8;
-			this.lblNewVersion.Text = "New version: 1.1.0";
+			this.lblNewVersion.Text = "New version: N/A";
 			// 
 			// LauncherForm
 			// 
