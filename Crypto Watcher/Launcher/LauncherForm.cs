@@ -48,7 +48,6 @@ namespace CryptoWatcher.Launcher
 		public LauncherForm()
 		{
 			InitializeComponent();
-			Hide();
 			btnYes.Click += (s, e) => DoUpdate();
 			btnNo.Click += (s, e) => StartApp();
 		}
@@ -62,7 +61,7 @@ namespace CryptoWatcher.Launcher
 
 			if (Settings.Default.LookForUpdates)
 				LookForUpdates();
-			StartApp();
+			else StartApp();
 		}
 
 		private void StartApp()
@@ -79,6 +78,7 @@ namespace CryptoWatcher.Launcher
 			}
 			catch
 			{
+				StartApp();
 				return;
 			}
 
@@ -89,6 +89,8 @@ namespace CryptoWatcher.Launcher
 				lblNewVersion.Text = "New version: " + _versionInfo.Name;
 				Show();
 			}
+			else
+				StartApp();
 		}
 
 		private void DoUpdate()
