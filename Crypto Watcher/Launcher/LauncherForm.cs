@@ -62,7 +62,7 @@ namespace CryptoWatcher.Launcher
 
 			if (Settings.Default.LookForUpdates)
 				LookForUpdates();
-			else StartApp();
+			StartApp();
 		}
 
 		private void StartApp()
@@ -79,7 +79,6 @@ namespace CryptoWatcher.Launcher
 			}
 			catch
 			{
-				StartApp();
 				return;
 			}
 
