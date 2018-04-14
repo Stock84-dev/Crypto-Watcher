@@ -109,7 +109,7 @@ namespace UpdateCreator
 		private string GetChangelog()
 		{
 			// Write changelog here.
-			return "Added indicator alerts: RSI, MACD, Stoch and are fully customizable. \n Prices now update instantly and are available for all exchanges across all trading pairs. \n Better update system. Merged launcher into one program. \n PLEASE REINSTALL APP for merge to take effect.";
+			return "Added indicator alerts: RSI, MACD, Stoch and are fully customizable. Prices now update instantly and are available for all exchanges across all trading pairs. Better update system. Merged launcher into one program. PLEASE REINSTALL APP for merge to take effect.";
 		}
 
 		private void PopulateData()
