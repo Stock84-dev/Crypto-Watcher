@@ -50,7 +50,7 @@
 //{
 //	class BinanceAPI : AbstractAPI
 //	{
-//		// TODO: if user has multiple alerts on same market don't haw multiple running sockets for it
+//		// NOTE: if user has multiple alerts on same market don't haw multiple running sockets for it
 //		static BinanceApi api = new BinanceApi();
 //		static ServerInfo serverInfo;
 //		static Dictionary<string, RunningSocket> runningSockets = new Dictionary<string, RunningSocket>();

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,10 +38,17 @@ namespace CryptoWatcher.Utilities
 				}
 			}
 			if (index == -1)
-				throw new ArgumentException("Could not find sample in string at specific occurance.");
+				return null;
+				//throw new ArgumentException("Could not find sample in string at specific occurance.");
 			str = str.Substring(index);
 			if (between)
-				return str.Substring(0, str.IndexOf(sample));
+			{
+				int sampleId = str.IndexOf(sample);
+				if (sampleId == -1)
+					return str;
+				else
+					return str.Substring(0, sampleId);
+			}
 			else return str;
 		}
 	}

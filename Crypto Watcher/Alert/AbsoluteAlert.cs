@@ -20,6 +20,8 @@
  * along with CRYPTO WATCHER.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
+using CryptoWatcher.Utilities;
+using MetroFramework.Controls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,30 +29,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoWatcher.Alerts
+namespace CryptoWatcher.Alert
 {
-	public enum TriggerType { crossing, lowerOrEqual, higherOrEqual, lower, higher  };
+	enum TriggerType { crossing, lowerOrEqual, higherOrEqual, lower, higher  };
     /// <summary>
     /// Used for calculating conditions, not actual alert.
     /// </summary>
 	class AbsoluteAlert
 	{
-        /// <summary>
-        /// Value used for condition, e.g. higher than 70.
-        /// </summary>
-        public float Trigger; // must be field
+		/// <summary>
+		/// Value used for condition, e.g. higher than 70.
+		/// </summary>
+		public float Trigger; // must be field, property cannot be passed as ref parameter using out keyword
 		/// <summary>
 		/// Use this if you don't want to automatically set previous value.
 		/// </summary>
-		public float current;
-        /// <summary>
-        /// When you update value set it here and then test condition.
-        /// </summary>
-		public float Current { get { return current; } set { previous = current; current = value; } }
-		float previous = -1;
-		public TriggerType Type { get; set; }
+		public float current = -1;
+		private float _previous = -1;
 
-		public AbsoluteAlert() { }
+		public AbsoluteAlert() : base() { }
 
 		public AbsoluteAlert(float trigger, TriggerType type)
 		{
@@ -61,73 +58,17 @@ namespace CryptoWatcher.Alerts
 		// creates alert from csv line (the one that is in file)
 		public AbsoluteAlert(ref string data)
 		{
-			int i;
+			Type = (TriggerType)int.Parse(Utility.GetSubstring(data, ';', 0));
+			Trigger = float.Parse(Utility.GetSubstring(data, ';', 1));
+			_previous = float.Parse(Utility.GetSubstring(data, ';', 2));
+			data = Utility.GetSubstring(data, ';', 3, false);
+		}
 
-			Type = (TriggerType)int.Parse(data.Substring(0, i = data.IndexOf(';')));
-			data = data.Substring(i + 1);
-			Trigger = float.Parse(data.Substring(0, i = data.IndexOf(';')));
-			data = data.Substring(i + 1);
-			// sometimes after last string there is nothing
-			if ((i = data.IndexOf(';')) == -1)
-				previous = float.Parse(data);
-			else
-			{
-				previous = float.Parse(data.Substring(0, i));
-				data = data.Substring(i + 1);
-			}
-		}
-        /// <summary>
-        /// Converts to csv line.
-        /// </summary>
-		public override string ToString()
-		{
-			// we don't need to store previous value if we aren't using it
-			string previousValue_str = Type == TriggerType.crossing ? previous.ToString() : string.Empty;
-			return $"{(int)Type};{Trigger};{previous}";
-		}
-        /// <summary>
-        /// Tests if condition is met.
-        /// </summary>
-		public bool Test()
-		{
-			switch (Type)
-			{
-				case TriggerType.higher:
-					if (Current > Trigger) return true;
-					break;
-				case TriggerType.higherOrEqual:
-					if (Current >= Trigger) return true;
-					break;
-				case TriggerType.lower:
-					if (Current < Trigger) return true;
-					break;
-				case TriggerType.lowerOrEqual:
-					if (Current <= Trigger) return true;
-					break;
-				case TriggerType.crossing:
-					if (previous == -1) throw new ArgumentException();
-					if (Current > Trigger && previous < Trigger || Current < Trigger && previous > Trigger)
-						return true;
-					break;
-			}
-			return false;
-		}
 		/// <summary>
-		/// Returns true if values ctross.
+		/// When you update value set it here and then test condition, this will automatically set previous value.
 		/// </summary>
-		/// <returns></returns>
-		public bool Test(AbsoluteAlert absoluteAlert)
-		{
-			if (previous < absoluteAlert.previous && Current > absoluteAlert.Current || previous > absoluteAlert.previous && Current < absoluteAlert.Current)
-				return true;
-
-			return false;
-		}
-
-		public string ConditionToString()
-		{
-			return ConditionToString(Type);
-		}
+		public float Current { get { return current; } set { _previous = current; current = value; } }
+		public TriggerType Type { get; set; }
 
 		public static string ConditionToString(TriggerType type)
 		{
@@ -159,9 +100,9 @@ namespace CryptoWatcher.Alerts
 			}
 			throw new ArgumentException();
 		}
-        /// <summary>
-        /// Converts all condition types to string.
-        /// </summary>
+		/// <summary>
+		/// Converts all condition types to string.
+		/// </summary>
 		public static string[] GetConditions()
 		{
 			var values = Enum.GetValues(typeof(TriggerType)).Cast<TriggerType>().ToArray();
@@ -174,12 +115,12 @@ namespace CryptoWatcher.Alerts
 			return types;
 		}
 
-        /// <summary>
-        /// Returns controls that is used for control panel when creating alert.
-        /// </summary>
+		/// <summary>
+		/// Returns controls that is used for control panel when creating alert.
+		/// </summary>
 		public static object[] GetOptions()
 		{
-			var txtValue = new MetroFramework.Controls.MetroTextBox
+			var txtValue = new MetroTextBox
 			{
 				Location = new System.Drawing.Point(83, 39),
 				Name = "txtValue",
@@ -187,7 +128,7 @@ namespace CryptoWatcher.Alerts
 				TabIndex = 10
 			};
 
-			var cBoxCondition = new MetroFramework.Controls.MetroComboBox
+			var cBoxCondition = new MetroComboBox
 			{
 				Location = new System.Drawing.Point(83, 0),
 				Name = "cBoxCondition",
@@ -196,7 +137,7 @@ namespace CryptoWatcher.Alerts
 			cBoxCondition.Items.AddRange(GetConditions());
 			cBoxCondition.SelectedIndex = 0;
 
-			var metroLabel3 = new MetroFramework.Controls.MetroLabel
+			var metroLabel3 = new MetroLabel
 			{
 				AutoSize = true,
 				Location = new System.Drawing.Point(36, 49),
@@ -205,7 +146,7 @@ namespace CryptoWatcher.Alerts
 				Text = "Value:"
 			};
 
-			var metroLabel7 = new MetroFramework.Controls.MetroLabel
+			var metroLabel7 = new MetroLabel
 			{
 				AutoSize = true,
 				Location = new System.Drawing.Point(5, 10),
@@ -215,6 +156,58 @@ namespace CryptoWatcher.Alerts
 			};
 
 			return new object[] { txtValue, cBoxCondition, metroLabel3, metroLabel7 };
+		}
+
+		/// <summary>
+		/// Converts to csv line.
+		/// </summary>
+		public override string ToString()
+		{
+			return $"{(int)Type};{Trigger.ToString("R")};{_previous}";
+		}
+        /// <summary>
+        /// Tests if condition is met.
+        /// </summary>
+		public bool Test()
+		{
+			// preventing firing alert when previous isn't initialized
+			if (_previous == -1 && Type == TriggerType.crossing)
+				return false;
+			switch (Type)
+			{
+				case TriggerType.higher:
+					if (Current > Trigger) return true;
+					break;
+				case TriggerType.higherOrEqual:
+					if (Current >= Trigger) return true;
+					break;
+				case TriggerType.lower:
+					if (Current < Trigger) return true;
+					break;
+				case TriggerType.lowerOrEqual:
+					if (Current <= Trigger) return true;
+					break;
+				case TriggerType.crossing:
+					if (Current > Trigger && _previous < Trigger || Current < Trigger && _previous > Trigger)
+						return true;
+					break;
+			}
+			return false;
+		}
+		/// <summary>
+		/// Returns true if values cross.
+		/// </summary>
+		public bool Test(AbsoluteAlert absoluteAlert)
+		{
+			if (_previous < absoluteAlert._previous && Current > absoluteAlert.Current || _previous > absoluteAlert._previous && Current < absoluteAlert.Current)
+				return true;
+
+			return false;
+		}
+
+		public string ConditionToString()
+		{
+			return ConditionToString(Type);
 		}
 	}
 }

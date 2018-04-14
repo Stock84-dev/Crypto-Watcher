@@ -47,7 +47,7 @@ namespace CryptoWatcher.Launcher
 		public string Changelog { get; set; }
 	}
 
-	public class VersionInfo
+	public struct VersionInfo
 	{
 		public VersionInfo(string name, string changelog, int id)
 		{

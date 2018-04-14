@@ -37,61 +37,59 @@ namespace CryptoWatcher.Launcher
 {
 	public partial class LauncherForm : MetroFramework.Forms.MetroForm
 	{
-		private VersionData versionData;
-		private WebClient wc = new WebClient();
-		private const string baseUpdatePath = "https://raw.githubusercontent.com/Stock84-dev/Crypto-Watcher/master/Update/";
-		private const string netVersionPath = baseUpdatePath + "CurrentVersion.txt";
-		private const string versionsPath = baseUpdatePath + "Versions/";
-		private const string tmpDownloadPath = "download tmp/";
-
+		private const string BASE_UPDATE_PATH = /*"https://raw.githubusercontent.com/Stock84-dev/Crypto-Watcher/1.0.0-alpha.2/Update/";*/"https://raw.githubusercontent.com/Stock84-dev/Crypto-Watcher/master/Update/";
+		private const string NET_VERSION_PATH = BASE_UPDATE_PATH + "VersionInfo.txt";
+		private const string VERSIONS_PATH = BASE_UPDATE_PATH + "Versions/";
+		private const string TMP_DOWNLOAD_PATH = "download tmp/";
+		private VersionData _versionData;
+		private VersionInfo _versionInfo;
+		private WebClient _webClient = new WebClient();
+		
 		public LauncherForm()
 		{
 			InitializeComponent();
+			Hide();
+			btnYes.Click += (s, e) => DoUpdate();
+			btnNo.Click += (s, e) => StartApp();
+		}
 
-			MessageBox.Show("This is an updated version.");
+		public bool ShowMainForm { get; set; } = false;
 
-			if (Directory.Exists(tmpDownloadPath))
-				Directory.Delete(tmpDownloadPath);
+		private void LauncherForm_Load(object sender, EventArgs e)
+		{
+			if (Directory.Exists(TMP_DOWNLOAD_PATH))
+				Directory.Delete(TMP_DOWNLOAD_PATH);
 
 			if (Settings.Default.LookForUpdates)
 				LookForUpdates();
-		}
-
-		private void btnYes_Click(object sender, EventArgs e)
-		{
-			DoUpdate();
-		}
-
-		private void btnNo_Click(object sender, EventArgs e)
-		{
-			StartApp();
+			else StartApp();
 		}
 
 		private void StartApp()
 		{
-			Hide();
-			MainForm mainForm = new MainForm();
-			mainForm.ShowDialog();
 			Close();
+			ShowMainForm = true;
 		}
 
 		private void LookForUpdates()
 		{
-			versionData = GetVersion();
-
-			if (Settings.Default.CurrentVersionId < versionData.Id)
+			try
 			{
-				txtBox.Text = versionData.Changelog;
+				_versionInfo = JsonConvert.DeserializeObject<VersionInfo>(_webClient.DownloadString(NET_VERSION_PATH));
+			}
+			catch
+			{
+				StartApp();
+				return;
+			}
+
+			if (Settings.Default.CurrentVersionId < _versionInfo.Id)
+			{
+				txtBox.Text = _versionInfo.Changelog;
 				lblCurrentVersion.Text = "Current version: " + Settings.Default.CurrentVersion;
-				lblNewVersion.Text = "New version: " + versionData.Name;
+				lblNewVersion.Text = "New version: " + _versionInfo.Name;
 				Show();
 			}
-		}
-
-		private VersionData GetVersion()
-		{
-			string netVersion = JsonConvert.DeserializeObject<string>(wc.DownloadString(netVersionPath));
-			return JsonConvert.DeserializeObject<VersionData>(wc.DownloadString(versionsPath + netVersion + "/VersionData.txt"));
 		}
 
 		private void DoUpdate()
@@ -104,6 +102,8 @@ namespace CryptoWatcher.Launcher
 			btnNo.Hide();
 			txtBox.Text = "";
 
+			_versionData = JsonConvert.DeserializeObject<VersionData>(_webClient.DownloadString(VERSIONS_PATH + _versionInfo.Name + "/" + _versionInfo.Name + ".txt"));
+
 			DeleteUnnecessaryFiles();
 			DownloadNeccessaryFiles();
 		}
@@ -112,7 +112,7 @@ namespace CryptoWatcher.Launcher
 		{
 			DirectoryInfo directoryInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
 
-			foreach (var reqdir in versionData.RequiredDirs)
+			foreach (var reqdir in _versionData.RequiredDirs)
 			{
 				bool found = false;
 				foreach (var dir in directoryInfo.GetDirectories())
@@ -132,7 +132,7 @@ namespace CryptoWatcher.Launcher
 				}
 			}
 
-			foreach (var reqfile in versionData.RequiredFiles)
+			foreach (var reqfile in _versionData.RequiredFiles)
 			{
 				bool found = false;
 				foreach (var file in directoryInfo.GetFiles())
@@ -148,25 +148,28 @@ namespace CryptoWatcher.Launcher
 					// Download file
 					txtBox.AppendText(Environment.NewLine);
 					txtBox.AppendText("Downloading: " + Path.GetDirectoryName(Application.ExecutablePath) + "/" + reqfile.RelativePath);
-					wc.DownloadFile(baseUpdatePath + "/Files/" + reqfile.Name, reqfile.RelativePath);
+					_webClient.DownloadFile(BASE_UPDATE_PATH + "/Files/" + reqfile.Name, reqfile.RelativePath);
 				}
 			}
 
-			wc.DownloadFile(versionsPath + versionData.Name + "/" + "CryptoWatcher.exe", tmpDownloadPath + "CryptoWatcher.exe");
-			Settings.Default.CurrentVersion = versionData.Name;
-			Settings.Default.CurrentVersionId = versionData.Id;
+			Directory.CreateDirectory("download tmp");
+			_webClient.DownloadFile(VERSIONS_PATH + _versionData.Name + "/" + "CryptoWatcher.exe", TMP_DOWNLOAD_PATH + "CryptoWatcher.exe");
+			Settings.Default.CurrentVersion = _versionData.Name;
+			Settings.Default.CurrentVersionId = _versionData.Id;
 
+			// closes app, starts new process wihich replaces old exe with new exe and then starts app
 			string argument = "/C Choice /C Y /N /D Y /T 4 & Del /F /Q \"{0}\" & Choice /C Y /N /D Y /T 2 & Move /Y \"{1}\" \"{2}\" & Start \"\" /D \"{3}\" \"{4}\"";// {5}";
 			string currentPath = Application.ExecutablePath;
-			string tempFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "/download tmp/CryptoWatcher.exe";
+			string tempFilePath = Path.GetDirectoryName(currentPath) + "\\download tmp\\CryptoWatcher.exe";
 			string newPath = Application.ExecutablePath;
 
 			ProcessStartInfo info = new ProcessStartInfo();
-			info.Arguments = string.Format(argument, currentPath, tempFilePath, newPath, Path.GetDirectoryName(newPath), Path.GetFileName(newPath)/*, launchArgs*/);
+			info.Arguments = string.Format(argument, currentPath, tempFilePath, newPath, Path.GetDirectoryName(newPath), Path.GetFileName(newPath));
 			info.WindowStyle = ProcessWindowStyle.Hidden;
 			info.CreateNoWindow = true;
 			info.FileName = "cmd.exe";
 			Process.Start(info);
+			Application.Exit();
 		}
 
 		private void DeleteUnnecessaryFiles()
@@ -175,7 +178,7 @@ namespace CryptoWatcher.Launcher
 
 			foreach (var dir in directoryInfo.GetDirectories())
 			{
-				if (!MyFile.Contains(dir.Name, versionData.RequiredDirs) && !MyFile.Contains(dir.Name, versionData.UserGeneratedDirs))
+				if (!MyFile.Contains(dir.Name, _versionData.RequiredDirs) && !MyFile.Contains(dir.Name, _versionData.UserGeneratedDirs))
 				{
 					txtBox.AppendText(Environment.NewLine);
 					txtBox.AppendText("Deleting: " + dir.FullName);
@@ -185,7 +188,7 @@ namespace CryptoWatcher.Launcher
 
 			foreach (var file in directoryInfo.GetFiles())
 			{
-				if (!MyFile.Contains(file.Name, versionData.RequiredFiles) && !MyFile.Contains(file.Name, versionData.UserGeneratedFiles) && file.Name != "CryptoWatcher.exe")
+				if (!MyFile.Contains(file.Name, _versionData.RequiredFiles) && !MyFile.Contains(file.Name, _versionData.UserGeneratedFiles) && file.Name != "CryptoWatcher.exe")
 				{
 					txtBox.AppendText(Environment.NewLine);
 					txtBox.AppendText("Deleting: " + file.FullName);

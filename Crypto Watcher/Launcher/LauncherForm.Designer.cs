@@ -57,7 +57,6 @@
 			this.btnNo.TabIndex = 4;
 			this.btnNo.Text = "No";
 			this.btnNo.UseSelectable = true;
-			this.btnNo.Click += new System.EventHandler(this.btnNo_Click);
 			// 
 			// btnYes
 			// 
@@ -68,7 +67,6 @@
 			this.btnYes.TabIndex = 3;
 			this.btnYes.Text = "Yes";
 			this.btnYes.UseSelectable = true;
-			this.btnYes.Click += new System.EventHandler(this.btnYes_Click);
 			// 
 			// txtBox
 			// 
@@ -146,6 +144,7 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.Name = "LauncherForm";
+			this.Load += new System.EventHandler(this.LauncherForm_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

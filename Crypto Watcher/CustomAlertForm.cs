@@ -32,53 +32,85 @@ using System.Windows.Forms;
 using System.Globalization;
 using System.Threading;
 using System.Diagnostics;
-using CryptoWatcher.Alerts;
+using CryptoWatcher.Alert;
 using CryptoWatcher.APIs;
+using MetroFramework.Controls;
 
 namespace CryptoWatcher
 {
 	// TODO: implement network conection indicator and no network exception
-	// TODO: when binance is selected notify user that we compare symbol not name (BCC BitConnect = BCC Bitcoin Cash on binance)
 	public partial class CustomAlertForm : MetroFramework.Forms.MetroForm
 	{
-		string baseName;
-		string baseSymbol;
-		public static MainForm MainForm { get; set; }
-		//List<Exchange> exchanges;
-		// these are only needed when price needs to be converted
-		//Dictionary<int, string> middleMarket;
+		private Dictionary<string, List<string>> _exchangesAndQuotes;
+		private string _baseName;
+		private string _baseSymbol;
+		private int _editedAlertId = -1;
+		private Task<List<CryptoCompareAPI.Coin>> _coinList;
+		private Task _populateMarketsTask;
 
 		public CustomAlertForm()
 		{
-			InitializeComponent();
+			_coinList = AbstractAPI.CryptoCompareAPI.GetCoinList();
 			PopulateSymbols();
-			PopulateConditions();
+			InitializeComponent();
+			cboxCondition.Items.AddRange(AbstractAlert.CreateChildClasses());
+			AbstractAlert.OnSubscribeFail += AbstractAlert_OnSubscribeFail;
+		}
+
+		public static MainForm MainForm { get; set; }
+
+		public async void ShowEdit(int alertId)
+		{
+			_editedAlertId = alertId;
+			Show();
+
+			txtSymbol.Text = AbstractAlert.Alerts[alertId].AlertData.BaseSymbol + " " + AbstractAlert.Alerts[alertId].AlertData.BaseName;
+			await _populateMarketsTask;
+			cboxCondition.SelectedIndex = cboxCondition.FindStringExact(AbstractAlert.Alerts[alertId].Name);
+			cboxMarket.SelectedIndex = cboxMarket.FindStringExact(AbstractAlert.Alerts[alertId].AlertData.QuoteSymbol);
+			cboxExchange.SelectedIndex = cboxExchange.FindStringExact(AbstractAlert.Alerts[alertId].AlertData.ExchangeName);
+
+			cBoxSound.SelectedIndex = cBoxSound.FindStringExact(Notification.SoundTypeToString(AbstractAlert.Alerts[alertId].Notification.Sound));
+			if(AbstractAlert.Alerts[alertId].Notification.Interval != -1)
+			{
+				txtInterval.Text = AbstractAlert.Alerts[alertId].Notification.Interval.ToString();
+				chcBoxRepeatable.Checked = true;
+			}
+			chcBoxShowWindow.Checked = AbstractAlert.Alerts[alertId].Notification.ShowWindow;
+			chcBoxWindowsMsg.Checked = AbstractAlert.Alerts[alertId].Notification.ShowWindowsMsg;
+
+
+			if (tabCondition.Controls.ContainsKey("panel"))
+				tabCondition.Controls.RemoveByKey("panel");
+			tabCondition.Controls.Add(AbstractAlert.Alerts[alertId].GetFilledUI());
+		}
+
+		protected override void OnFormClosing(FormClosingEventArgs e)
+		{
+			Hide();
+			e.Cancel = true;
+			if (_editedAlertId != -1)
+				AbstractAlert.Alerts[_editedAlertId].Subscribe();
 		}
 
 		private async void PopulateSymbols()
 		{
-            AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();
-            // populating autocomplete list in symbol textbox
-            foreach (var ticker in await CoinMarketCapAPI.GetTickerList())
-                acsc.Add(ticker.symbol + " " + ticker.name);
+			AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();
+			// populating autocomplete list in symbol textbox
+			await _coinList;
+            foreach (var coin in _coinList.Result)
+                acsc.Add(coin.Symbol + " " + coin.CoinName);
             txtSymbol.AutoCompleteCustomSource = acsc;
         }
 
-		private void PopulateConditions()
-		{
-			cboxCondition.Items.Add(new AlertItem(new PriceAlert()));
-			cboxCondition.Items.Add(new AlertItem(new RSIAlert()));
-			cboxCondition.Items.Add(new AlertItem(new StochAlert()));
-			cboxCondition.Items.Add(new AlertItem(new MACDAlert()));
-		}
-
 		private void CustomAlertForm_VisibleChanged(object sender, EventArgs e)
 		{
+			// changing controls to default state
 			if (Visible)
 			{
 				tabControl.SelectedTab = tabCondition;
-				baseName = null;
-				baseSymbol = null;
+				_baseName = null;
+				_baseSymbol = null;
 				txtSymbol.Text = "";
 				cboxCondition.SelectedIndex = -1;
 				while (cboxMarket.Items.Count > 0)
@@ -92,7 +124,8 @@ namespace CryptoWatcher
 				txtInterval.Text = "";
 				cBoxInterval.SelectedIndex = 0;
 				lblError.Text = "";
-				pBox5Min.Visible = false;
+				if (_editedAlertId == -1)
+					ActiveControl = txtSymbol;
 			}
 		}
 
@@ -118,53 +151,51 @@ namespace CryptoWatcher
 		//5.
 		//txtSymbol.Invoke(new Func<string, bool>(str => { return txtSymbol.Text.Contains(str) ? true : false; }), a.symbol.ToUpper());
 
-		private async void txtSymbol_LeaveAsync(object sender, EventArgs e)
+		private void txtSymbol_TextChanged(object sender, EventArgs e)
 		{
-            //if(!txtSymbol.Text.Contains(" ["))
-            //{
-            //	lblError.Text = "Asset not found!";
-            //	lblError.Visible = true;
-            //	return;
-            //}
-            //baseName = txtSymbol.Text.Substring(0, txtSymbol.Text.IndexOf(" ["));
-            //baseSymbol = txtSymbol.Text.Substring(txtSymbol.Text.IndexOf("[") + 1, txtSymbol.Text.IndexOf("]") - txtSymbol.Text.IndexOf("[") - 1);
-            bool coinFound = false;
-			if(txtSymbol.Text.IndexOf(" ") != -1)
+			_populateMarketsTask = PopulateMarkets();
+		}
+
+		private async Task PopulateMarkets()
+		{
+			bool coinFound = false;
+			if (txtSymbol.Text.IndexOf(" ") != -1)
 			{
-				baseSymbol = txtSymbol.Text.Substring(0, txtSymbol.Text.IndexOf(" "));
-				baseName = txtSymbol.Text.Substring(txtSymbol.Text.IndexOf(" ") + 1);
-				foreach (var ticker in await CoinMarketCapAPI.GetTickerList())
+				_baseSymbol = txtSymbol.Text.Substring(0, txtSymbol.Text.IndexOf(" "));
+				_baseName = txtSymbol.Text.Substring(txtSymbol.Text.IndexOf(" ") + 1);
+				await _coinList;
+				foreach (var coin in _coinList.Result)
 				{
-					if (ticker.name == baseName && ticker.symbol == baseSymbol)
+					if (coin.CoinName == _baseName && coin.Symbol == _baseSymbol)
 					{
 						coinFound = true;
 						break;
 					}
 				}
 			}
-            if(!coinFound)
-            {
+			if (!coinFound)
+			{
 				lblError.Text = "Asset not found!";
-				lblError.Visible = true;
 				return;
 			}
 			else
 			{
-				cboxMarket.Items.AddRange(AbstractAPI.GetQuoteItems(baseName, baseSymbol).ToArray());
+				_exchangesAndQuotes = ((await (AbstractAPI.CryptoCompareAPI).GetQuotesAndExchanges(_baseSymbol)));
+				cboxMarket.Items.Clear();
+				cboxMarket.Items.AddRange(_exchangesAndQuotes.Keys.OrderBy(x => x).ToArray());
+				cboxMarket.SelectedIndex = 0;
+				PopulateExchanges();
 				lblError.Text = "";
-				lblError.Visible = false;
 			}
 		}
 
-		void SymbolChanged()
+		private void SymbolChanged()
 		{
 			lblError.Text = "";
 
 			// removing selected items because user changed coin name
 			cboxExchange.Items.Clear();
 			cboxMarket.Items.Clear();
-			if (pBox5Min.Visible)
-				pBox5Min.Visible = false;
 		}
 
 		// changes panel to customize alert
@@ -173,13 +204,19 @@ namespace CryptoWatcher
 			if(tabCondition.Controls.ContainsKey("panel"))
 				tabCondition.Controls.RemoveByKey("panel");
 			if (cboxCondition.SelectedItem != null)
-				tabCondition.Controls.Add(((AlertItem)cboxCondition.SelectedItem).abstractAlert.GetOptions());
+				tabCondition.Controls.Add(((AbstractAlert)cboxCondition.SelectedItem).GetUI());
 		}
 
-		private void cboxMarket_LeaveAsync(object sender, EventArgs e)
+		private void cboxMarket_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (cboxMarket.SelectedItem != null)
-				cboxExchange.Items.AddRange(((QuoteItem)cboxMarket.SelectedItem).Exchanges.ToArray());
+			PopulateExchanges();
+		}
+
+		private void PopulateExchanges()
+		{
+			cboxExchange.Items.Clear();
+			cboxExchange.Items.AddRange(_exchangesAndQuotes[cboxMarket.Text].OrderBy(x => x).ToArray());
+			cboxExchange.SelectedIndex = cboxExchange.FindStringExact("Aggregate");
 		}
 
 		private void btnAddAlert_Click(object sender, EventArgs e)
@@ -201,15 +238,49 @@ namespace CryptoWatcher
 				return;
 			}
 
-			alertData = new AlertData(baseSymbol, cboxMarket.Text.ToUpper(), baseName, cboxExchange.Text);
+			alertData = new AlertData(_baseSymbol, cboxMarket.Text.ToUpper(), _baseName, cboxExchange.Text);
 
-			// value in custom alert is not valid
-			if (!((AlertItem)(cboxCondition.SelectedItem)).abstractAlert.Create(alertData, ntfy, (MetroFramework.Controls.MetroPanel) tabCondition.Controls["panel"]))
+			if (_editedAlertId != -1)
 			{
-				return;
+				AbstractAlert.Alerts[_editedAlertId].Unsubscribe();
+				AbstractAlert.Alerts[_editedAlertId].StopNotifying(false, true);
+				MainForm.RemoveNotification(_editedAlertId);
+				// Alert type changed
+				if (AbstractAlert.Alerts[_editedAlertId].GetType() != ((AbstractAlert)cboxCondition.SelectedItem).GetType())
+				{
+					if (!AbstractAlert.Alerts[_editedAlertId].CreateAlert(alertData, ntfy, (MetroPanel)tabCondition.Controls["panel"], true, (AbstractAlert)cboxCondition.SelectedItem))
+					{
+						_editedAlertId = -1;
+						return;
+					}
+					AbstractAlert.Alerts[_editedAlertId] = (AbstractAlert)cboxCondition.SelectedItem;
+				}
+				if (!AbstractAlert.Alerts[_editedAlertId].CreateAlert(alertData, ntfy, (MetroPanel)tabCondition.Controls["panel"], true))
+				{
+					_editedAlertId = -1;
+					return;
+				}
 			}
-			MainForm.AddAlertToListView();
+			else
+			{
+				// value in custom alert is not valid
+				if (!((AbstractAlert)(cboxCondition.SelectedItem)).CreateAlert(alertData, ntfy, (MetroPanel)tabCondition.Controls["panel"]))
+				{
+					return;
+				}
+			}
+
+			MainForm.AddAlertToGridView(_editedAlertId);
+			_editedAlertId = -1;
+			// creating new alert to replace the old one
+			cboxCondition.Items[cboxCondition.SelectedIndex] = AbstractAlert.CreateChildClass(((AbstractAlert)cboxCondition.SelectedItem).GetType());
 			Close();
+		}
+
+		private void AbstractAlert_OnSubscribeFail(object sender, EventArgs e)
+		{
+			MessageBox.Show("Not enough data on the server consider lowering timeframe.");
+			ShowEdit(AbstractAlert.Alerts.IndexOf((AbstractAlert)sender));
 		}
 
 		private bool GetNotification(out Notification notification)
@@ -236,24 +307,6 @@ namespace CryptoWatcher
 		
 			return true;
 		}
-		// when user tabs to combobox dropdown appears
-		private void cboxCondition_Enter(object sender, EventArgs e)
-		{
-			if (MouseButtons == MouseButtons.None)
-				((ComboBox)sender).DroppedDown = true;
-		}
-
-		private void cboxMarket_Enter(object sender, EventArgs e)
-		{
-			if (MouseButtons == MouseButtons.None)
-				((ComboBox)sender).DroppedDown = true;
-		}
-
-		private void cboxExchange_Enter(object sender, EventArgs e)
-		{
-			if (MouseButtons == MouseButtons.None)
-				((ComboBox)sender).DroppedDown = true;
-		}
 
 		private void chcBoxRepeatable_CheckedChanged(object sender, EventArgs e)
 		{
@@ -271,44 +324,5 @@ namespace CryptoWatcher
 				cBoxInterval.Visible = false;
 			}
 		}
-
-		protected override void OnFormClosing(FormClosingEventArgs e)
-		{
-			Hide();
-			e.Cancel = true;
-			//base.OnFormClosing(e);
-		}
-
-		private class AlertItem
-		{
-			public AbstractAlert abstractAlert { get; }
-
-			public AlertItem(AbstractAlert abstractAlert)
-			{
-				this.abstractAlert = abstractAlert;
-			}
-
-			public override string ToString()
-			{
-				return abstractAlert.Name;
-			}
-		}
-
-        private class CoinItem
-        {
-            public CoinItem(string name, string symbol)
-            {
-                Name = name;
-                Symbol = symbol;
-            }
-
-            public string Name { get; set; }
-            public string Symbol { get; set; }
-
-            public override string ToString()
-            {
-                return Symbol + " " + Name;
-            }
-        }
 	}
 }

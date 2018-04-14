@@ -27,7 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoWatcher.Alerts
+namespace CryptoWatcher.Alert
 {
 	static class TA
 	{
@@ -58,20 +58,8 @@ namespace CryptoWatcher.Alerts
 
 				output.Add(100 * (smooth_up / (smooth_up + smooth_down)));
 			}
+
 			return output;
-		}
-
-		public struct Stoch
-		{
-
-			public float stoch { get; set; }
-			public float stoch_ma { get; set; }
-
-			public Stoch(float stoch, float stoch_ma)
-			{
-				this.stoch = stoch;
-				this.stoch_ma = stoch_ma;
-			}
 		}
 
 		public static Stoch[] GetStoch(APIs.Candlestick[] candlesticks, int kperiod = 14, int dperiod = 3, int smooth = 1)
@@ -122,19 +110,8 @@ namespace CryptoWatcher.Alerts
 			return stochs;
 		}
 
-		public struct MACD
-		{
-			
-			public List<float> Macd { get; set; }
-			public List<float> Signal { get; set; }
-			public List<float> Histogram { get; set; }
-		}
-
 		public static MACD GetMACD(List<float> input, int fastLength, int slowLength)
 		{
-			StreamWriter sw = new StreamWriter("p.txt");
-			input.ForEach(f=>sw.WriteLine(f));
-			sw.Close();
 			int maxLength = fastLength > slowLength ? fastLength : slowLength;
 			List<float> emaFast = GetEMA(input, fastLength);
 			List<float> emaSlow = GetEMA(input, slowLength);
@@ -183,6 +160,25 @@ namespace CryptoWatcher.Alerts
 			}
 
 			return output;
+		}
+
+		public struct Stoch
+		{
+			public float stoch { get; set; }
+			public float stoch_ma { get; set; }
+
+			public Stoch(float stoch, float stoch_ma)
+			{
+				this.stoch = stoch;
+				this.stoch_ma = stoch_ma;
+			}
+		}
+
+		public struct MACD
+		{
+			public List<float> Macd { get; set; }
+			public List<float> Signal { get; set; }
+			public List<float> Histogram { get; set; }
 		}
 	}
 }

@@ -36,36 +36,15 @@ namespace CryptoWatcher.Utilities
 	///c.EventForKey("a").Add(str => Console.WriteLine(str.ToUpper()));
 	///c.OnEventForKey("a", "baa baa black sheep");
 	/// </summary>
-	public class MyEvent
+	public class MyEvent<T>
 	{
-		public class Member
-		{
-			public List<Action<object[]>> AnEvent = new List<Action<object[]>>();
-			public void OnEvent(object[] parameters)
-			{
-				if (AnEvent != null)
-				{
-					// creating copy to prevent data corruption caused by threading, not best practice
-					AnEvent.ToList().ForEach(action => action(parameters));
-				}
-			}
-
-			public void AddEvent(Action<object[]> action)
-			{
-				this.AnEvent.Add(action);
-			}
-
-			public void RemoveEvent(Action<object[]> action)
-			{
-				AnEvent.Remove(action);
-			}
-		}
+		private readonly object _door = new object();
 
 		protected Dictionary<string, Member> members = new Dictionary<string, Member>();
 
 		public void CreateEventForKey(string key)
 		{
-			this.members[key] = new Member();
+			lock(_door) members[key] = new Member();
 		}
 
 		/// <summary>
@@ -73,39 +52,75 @@ namespace CryptoWatcher.Utilities
         /// </summary>
         /// <param name="k">Key name.</param>
         /// <param name="parameters">Parameters passed to called functions.</param>
-		public void OnEventForKey(string k, object[] parameters)
+		public void OnEventForKey(string k, T parameter)
 		{
-			if (members.ContainsKey(k)) { members[k].OnEvent(parameters); }
-			else { throw new ArgumentException(); }
+			lock (_door)
+			{
+				if (members.ContainsKey(k))
+					members[k].OnEvent(parameter);
+				else throw new ArgumentException();
+			}
 		}
-        /// <summary>
-        /// Add action to list to get called.
-        /// </summary>
-		public List<Action<object[]>> EventForKey(string k)
+
+		/// <summary>
+		/// Add action to list to get called.
+		/// </summary>
+		public List<Action<T>> EventForKey(string k)
 		{
-			if (members.ContainsKey(k)) { return members[k].AnEvent; }
-			else { throw new KeyNotFoundException(); }
+			lock (_door)
+			{
+				if (members.ContainsKey(k))
+					return members[k].AnEvent;
+				else throw new KeyNotFoundException();
+			}
 		}
 
 		public bool ContainsKey(string key)
 		{
-			if (members.ContainsKey(key)) { return true; }
+			lock (_door)
+			{
+				if (members.ContainsKey(key))
+					return true;
+			}
 			return false;
 		}
 
 		public void Remove(string key)
 		{
-			members.Remove(key);
+			lock (_door) members.Remove(key);
 		}
 
-		public void RemoveEvent(string key, Action<object[]> action)
+		public void RemoveEvent(string key, Action<T> action)
 		{
-			members[key].RemoveEvent(action);
+			lock (_door) members[key].RemoveEvent(action);
 		}
 
 		public int Count(string key)
 		{
-			return members[key].AnEvent.Count;
+			lock (_door) return members[key].AnEvent.Count;
+		}
+
+		public class Member
+		{
+			public List<Action<T>> AnEvent = new List<Action<T>>();
+			public void OnEvent(T parameter)
+			{
+				if (AnEvent != null)
+				{
+					// creating copy to prevent data corruption caused by threading, not best practice
+					AnEvent.ToList().ForEach(action => action(parameter));
+				}
+			}
+
+			public void AddEvent(Action<T> action)
+			{
+				this.AnEvent.Add(action);
+			}
+
+			public void RemoveEvent(Action<T> action)
+			{
+				AnEvent.Remove(action);
+			}
 		}
 	}
 }

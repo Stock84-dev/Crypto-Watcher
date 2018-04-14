@@ -22,29 +22,41 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-
-// use this form to design alert controls
-namespace CryptoWatcher.Alerts
+using CryptoWatcher.Utilities;
+namespace CryptoWatcher.Alert
 {
-	public partial class AlertFormEditor : MetroFramework.Forms.MetroForm
+	// data that is required for all alerts
+	struct AlertData
 	{
-		public AlertFormEditor()
+		public AlertData(string baseSymbol, string quoteSymbol, string baseName, string exchangeName)
 		{
-			InitializeComponent();
-			cboxCondition.SelectedIndex = 0;
+			BaseSymbol = baseSymbol;
+			QuoteSymbol = quoteSymbol;
+			BaseName = baseName;
+			ExchangeName = exchangeName;
+		}
+        // creates alert data from csv line
+		public AlertData(ref string data)
+		{
+			BaseSymbol = Utility.GetSubstring(data, ';', 0);
+			QuoteSymbol = Utility.GetSubstring(data, ';', 1);
+			BaseName = Utility.GetSubstring(data, ';', 2);
+			ExchangeName = Utility.GetSubstring(data, ';', 3);
+			data = Utility.GetSubstring(data, ';', 4, false);
 		}
 
-		private void btnDone_Click(object sender, EventArgs e)
+		public string BaseSymbol { get; set; }
+		public string QuoteSymbol { get; set; }
+		public string BaseName { get; set; }
+		public string ExchangeName { get; set; }
+
+        // gets csv line
+		public override string ToString()
 		{
-			
+			return $"{BaseSymbol};{QuoteSymbol};{BaseName};{ExchangeName}";
 		}
 	}
 }

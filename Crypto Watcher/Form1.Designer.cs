@@ -55,26 +55,33 @@ namespace CryptoWatcher
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.ntfyIconMinimized = new System.Windows.Forms.NotifyIcon(this.components);
 			this.btnNew = new MetroFramework.Controls.MetroButton();
 			this.btnRemove = new MetroFramework.Controls.MetroButton();
-			this.lstView = new MetroFramework.Controls.MetroListView();
-			this.CoinName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Condition = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Value = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Market = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Site = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.tabControl = new MetroFramework.Controls.MetroTabControl();
 			this.tabAlert = new MetroFramework.Controls.MetroTabPage();
+			this.grdAlerts = new MetroFramework.Controls.MetroGrid();
+			this.btnEdit = new MetroFramework.Controls.MetroButton();
 			this.tabNotifications = new MetroFramework.Controls.MetroTabPage();
 			this.grdNotifications = new MetroFramework.Controls.MetroGrid();
 			this.tabSettings = new MetroFramework.Controls.MetroTabPage();
 			this.chcBoxAutoUpdate = new MetroFramework.Controls.MetroCheckBox();
 			this.chcBoxPlaySound = new MetroFramework.Controls.MetroCheckBox();
-			this.lblNextUpdate = new System.Windows.Forms.Label();
 			this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+			this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Currency = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Exchange = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.AlertType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Condition = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Timeframe = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Price = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.IndicatorValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.tabControl.SuspendLayout();
 			this.tabAlert.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.grdAlerts)).BeginInit();
 			this.tabNotifications.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.grdNotifications)).BeginInit();
 			this.tabSettings.SuspendLayout();
@@ -89,6 +96,7 @@ namespace CryptoWatcher
 			// 
 			// btnNew
 			// 
+			this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.btnNew.Location = new System.Drawing.Point(3, 439);
 			this.btnNew.Name = "btnNew";
 			this.btnNew.Size = new System.Drawing.Size(75, 23);
@@ -99,7 +107,8 @@ namespace CryptoWatcher
 			// 
 			// btnRemove
 			// 
-			this.btnRemove.Location = new System.Drawing.Point(84, 439);
+			this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.btnRemove.Location = new System.Drawing.Point(165, 439);
 			this.btnRemove.Name = "btnRemove";
 			this.btnRemove.Size = new System.Drawing.Size(75, 23);
 			this.btnRemove.TabIndex = 10;
@@ -107,68 +116,27 @@ namespace CryptoWatcher
 			this.btnRemove.UseSelectable = true;
 			this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
 			// 
-			// lstView
-			// 
-			this.lstView.AutoArrange = false;
-			this.lstView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.CoinName,
-            this.Condition,
-            this.Value,
-            this.Market,
-            this.Site});
-			this.lstView.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this.lstView.FullRowSelect = true;
-			this.lstView.Location = new System.Drawing.Point(0, 3);
-			this.lstView.Name = "lstView";
-			this.lstView.OwnerDraw = true;
-			this.lstView.Size = new System.Drawing.Size(996, 430);
-			this.lstView.TabIndex = 11;
-			this.lstView.UseCompatibleStateImageBehavior = false;
-			this.lstView.UseSelectable = true;
-			this.lstView.View = System.Windows.Forms.View.Details;
-			// 
-			// CoinName
-			// 
-			this.CoinName.Text = "Name";
-			this.CoinName.Width = 198;
-			// 
-			// Condition
-			// 
-			this.Condition.Text = "Condition";
-			this.Condition.Width = 198;
-			// 
-			// Value
-			// 
-			this.Value.Text = "Value";
-			this.Value.Width = 198;
-			// 
-			// Market
-			// 
-			this.Market.Text = "Market";
-			this.Market.Width = 198;
-			// 
-			// Site
-			// 
-			this.Site.Text = "Site";
-			this.Site.Width = 200;
-			// 
 			// tabControl
 			// 
+			this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.tabControl.Controls.Add(this.tabAlert);
 			this.tabControl.Controls.Add(this.tabNotifications);
 			this.tabControl.Controls.Add(this.tabSettings);
 			this.tabControl.Location = new System.Drawing.Point(23, 63);
 			this.tabControl.Name = "tabControl";
-			this.tabControl.SelectedIndex = 2;
+			this.tabControl.SelectedIndex = 0;
 			this.tabControl.Size = new System.Drawing.Size(1004, 504);
 			this.tabControl.TabIndex = 12;
 			this.tabControl.UseSelectable = true;
 			// 
 			// tabAlert
 			// 
+			this.tabAlert.Controls.Add(this.grdAlerts);
+			this.tabAlert.Controls.Add(this.btnEdit);
 			this.tabAlert.Controls.Add(this.btnNew);
 			this.tabAlert.Controls.Add(this.btnRemove);
-			this.tabAlert.Controls.Add(this.lstView);
 			this.tabAlert.HorizontalScrollbarBarColor = true;
 			this.tabAlert.HorizontalScrollbarHighlightOnWheel = false;
 			this.tabAlert.HorizontalScrollbarSize = 10;
@@ -180,6 +148,77 @@ namespace CryptoWatcher
 			this.tabAlert.VerticalScrollbarBarColor = true;
 			this.tabAlert.VerticalScrollbarHighlightOnWheel = false;
 			this.tabAlert.VerticalScrollbarSize = 10;
+			// 
+			// grdAlerts
+			// 
+			this.grdAlerts.AllowUserToAddRows = false;
+			this.grdAlerts.AllowUserToDeleteRows = false;
+			this.grdAlerts.AllowUserToOrderColumns = true;
+			this.grdAlerts.AllowUserToResizeRows = false;
+			this.grdAlerts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.grdAlerts.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+			this.grdAlerts.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			this.grdAlerts.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.grdAlerts.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+			this.grdAlerts.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.grdAlerts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			this.grdAlerts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.grdAlerts.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Id,
+            this.Currency,
+            this.Exchange,
+            this.AlertType,
+            this.Condition,
+            this.Timeframe,
+            this.Price,
+            this.IndicatorValue});
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.grdAlerts.DefaultCellStyle = dataGridViewCellStyle2;
+			this.grdAlerts.EnableHeadersVisualStyles = false;
+			this.grdAlerts.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.grdAlerts.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			this.grdAlerts.Location = new System.Drawing.Point(3, 3);
+			this.grdAlerts.Name = "grdAlerts";
+			this.grdAlerts.ReadOnly = true;
+			this.grdAlerts.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.grdAlerts.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			this.grdAlerts.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+			this.grdAlerts.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.grdAlerts.Size = new System.Drawing.Size(997, 430);
+			this.grdAlerts.TabIndex = 13;
+			// 
+			// btnEdit
+			// 
+			this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.btnEdit.Location = new System.Drawing.Point(84, 439);
+			this.btnEdit.Name = "btnEdit";
+			this.btnEdit.Size = new System.Drawing.Size(75, 23);
+			this.btnEdit.TabIndex = 12;
+			this.btnEdit.Text = "Edit";
+			this.btnEdit.UseSelectable = true;
+			this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
 			// 
 			// tabNotifications
 			// 
@@ -201,27 +240,30 @@ namespace CryptoWatcher
 			this.grdNotifications.AllowUserToAddRows = false;
 			this.grdNotifications.AllowUserToDeleteRows = false;
 			this.grdNotifications.AllowUserToResizeRows = false;
+			this.grdNotifications.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.grdNotifications.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
 			this.grdNotifications.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.grdNotifications.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
 			this.grdNotifications.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.grdNotifications.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.grdNotifications.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.grdNotifications.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.grdNotifications.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle5.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
+			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.grdNotifications.DefaultCellStyle = dataGridViewCellStyle5;
 			this.grdNotifications.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 			this.grdNotifications.EnableHeadersVisualStyles = false;
 			this.grdNotifications.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
@@ -229,14 +271,14 @@ namespace CryptoWatcher
 			this.grdNotifications.Location = new System.Drawing.Point(3, 3);
 			this.grdNotifications.Name = "grdNotifications";
 			this.grdNotifications.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-			dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.grdNotifications.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+			dataGridViewCellStyle6.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.grdNotifications.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
 			this.grdNotifications.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 			this.grdNotifications.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.grdNotifications.Size = new System.Drawing.Size(993, 456);
@@ -287,23 +329,61 @@ namespace CryptoWatcher
 			this.chcBoxPlaySound.UseSelectable = true;
 			this.chcBoxPlaySound.CheckedChanged += new System.EventHandler(this.chcBoxPlaySound_CheckedChanged);
 			// 
-			// lblNextUpdate
-			// 
-			this.lblNextUpdate.AutoSize = true;
-			this.lblNextUpdate.BackColor = System.Drawing.SystemColors.ControlLightLight;
-			this.lblNextUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-			this.lblNextUpdate.ForeColor = System.Drawing.SystemColors.ControlDark;
-			this.lblNextUpdate.Location = new System.Drawing.Point(1002, 566);
-			this.lblNextUpdate.Name = "lblNextUpdate";
-			this.lblNextUpdate.Size = new System.Drawing.Size(18, 13);
-			this.lblNextUpdate.TabIndex = 13;
-			this.lblNextUpdate.Text = "1s";
-			// 
 			// metroToolTip1
 			// 
 			this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
 			this.metroToolTip1.StyleManager = null;
 			this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+			// 
+			// Id
+			// 
+			this.Id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+			this.Id.HeaderText = "Id";
+			this.Id.Name = "Id";
+			this.Id.ReadOnly = true;
+			this.Id.Width = 40;
+			// 
+			// Currency
+			// 
+			this.Currency.HeaderText = "Currency";
+			this.Currency.Name = "Currency";
+			this.Currency.ReadOnly = true;
+			// 
+			// Exchange
+			// 
+			this.Exchange.HeaderText = "Exchange";
+			this.Exchange.Name = "Exchange";
+			this.Exchange.ReadOnly = true;
+			// 
+			// AlertType
+			// 
+			this.AlertType.HeaderText = "Alert type";
+			this.AlertType.Name = "AlertType";
+			this.AlertType.ReadOnly = true;
+			// 
+			// Condition
+			// 
+			this.Condition.HeaderText = "Condition";
+			this.Condition.Name = "Condition";
+			this.Condition.ReadOnly = true;
+			// 
+			// Timeframe
+			// 
+			this.Timeframe.HeaderText = "Timeframe";
+			this.Timeframe.Name = "Timeframe";
+			this.Timeframe.ReadOnly = true;
+			// 
+			// Price
+			// 
+			this.Price.HeaderText = "Price";
+			this.Price.Name = "Price";
+			this.Price.ReadOnly = true;
+			// 
+			// IndicatorValue
+			// 
+			this.IndicatorValue.HeaderText = "Indicator Value";
+			this.IndicatorValue.Name = "IndicatorValue";
+			this.IndicatorValue.ReadOnly = true;
 			// 
 			// MainForm
 			// 
@@ -311,7 +391,6 @@ namespace CryptoWatcher
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1050, 590);
 			this.Controls.Add(this.tabControl);
-			this.Controls.Add(this.lblNextUpdate);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MainForm";
 			this.Text = "Crypto Watcher";
@@ -320,12 +399,12 @@ namespace CryptoWatcher
 			this.Resize += new System.EventHandler(this.MainResize);
 			this.tabControl.ResumeLayout(false);
 			this.tabAlert.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.grdAlerts)).EndInit();
 			this.tabNotifications.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.grdNotifications)).EndInit();
 			this.tabSettings.ResumeLayout(false);
 			this.tabSettings.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
         }
 
@@ -334,21 +413,24 @@ namespace CryptoWatcher
         private System.Windows.Forms.NotifyIcon ntfyIconMinimized;
         private MetroFramework.Controls.MetroButton btnNew;
         private MetroFramework.Controls.MetroButton btnRemove;
-        private MetroFramework.Controls.MetroListView lstView;
         private MetroFramework.Controls.MetroTabControl tabControl;
         private MetroFramework.Controls.MetroTabPage tabAlert;
         private MetroFramework.Controls.MetroTabPage tabSettings;
-        private System.Windows.Forms.ColumnHeader CoinName;
-        private System.Windows.Forms.ColumnHeader Market;
-        private System.Windows.Forms.ColumnHeader Site;
-        private System.Windows.Forms.ColumnHeader Condition;
-        private System.Windows.Forms.ColumnHeader Value;
         private MetroFramework.Controls.MetroCheckBox chcBoxPlaySound;
         private MetroFramework.Controls.MetroCheckBox chcBoxAutoUpdate;
         private MetroFramework.Components.MetroToolTip metroToolTip1;
-		private System.Windows.Forms.Label lblNextUpdate;
 		private MetroFramework.Controls.MetroTabPage tabNotifications;
 		private MetroFramework.Controls.MetroGrid grdNotifications;
+		private MetroFramework.Controls.MetroButton btnEdit;
+		private MetroFramework.Controls.MetroGrid grdAlerts;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Id;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Currency;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Exchange;
+		private System.Windows.Forms.DataGridViewTextBoxColumn AlertType;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Condition;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Timeframe;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Price;
+		private System.Windows.Forms.DataGridViewTextBoxColumn IndicatorValue;
 	}
 }
 

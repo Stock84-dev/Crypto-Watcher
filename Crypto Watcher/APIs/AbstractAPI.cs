@@ -35,74 +35,19 @@ namespace CryptoWatcher.APIs
 {
 	public abstract class AbstractAPI
 	{
-		protected static MyEvent priceSubscription = new MyEvent();
-		protected static MyEvent candleSubscription = new MyEvent();
-		//static BinanceAPI binanceAPI = new BinanceAPI();
-		private static Dictionary<string, AbstractAPI> exchanges;
+		private static CryptoCompareAPI _CCCAG = new CryptoCompareAPI();
+		public static CryptoCompareAPI CryptoCompareAPI {get { return _CCCAG; } }
+		public static CoinMarketCapAPI CoinMarketCapAPI { get; } = new CoinMarketCapAPI();
 
-        public abstract List<QuoteSymbol> GetQuoteSymbols(string name, string symbol);
-		protected abstract void PriceSubscribe(string baseSymbol, string quoteSymbol, Action<object[]> action);
-		protected abstract void PriceUnsubscribe(string baseSymbol, string quoteSymbol, Action<object[]> action);
-		protected abstract void CandleSubscribe(string baseSymbol, string quoteSymbol, Timeframe timeframe, int length, Action<object[]> action);
-		protected abstract void CandleUnsubscribe(string baseSymbol, string quoteSymbol, Timeframe timeframe, Action<object[]> action);
-		public abstract bool SupportsCandles { get; }
-
-		public static void Init()
-		{
-            exchanges = new Dictionary<string, AbstractAPI>
-            {
-                { CoinMarketCapAPI.Name, new CoinMarketCapAPI() },
-                { CryptoCompareAPI.Name, new CryptoCompareAPI() }
-            };
-        }
-
-		public static void UnsubscribePrice(string exchange, string baseSymbol, string quoteSymbol, Action<object[]> action)
-		{
-			exchanges[exchange].PriceUnsubscribe(baseSymbol, quoteSymbol, action);
-		}
-
-		public static void SubscrbePrice(string exchange, string baseSymbol, string quoteSymbol, Action<object[]> action)
-		{
-			exchanges[exchange].PriceSubscribe(baseSymbol, quoteSymbol, action);
-		}
-
-		public static void UnsubscribeCandle(string exchange, string baseSymbol, string quoteSymbol, Timeframe timeframe, Action<object[]> action)
-		{
-			exchanges[exchange].CandleUnsubscribe(baseSymbol, quoteSymbol, timeframe, action);
-		}
-
-		public static void SubscrbeCandle(string exchange, string baseSymbol, string quoteSymbol, Timeframe timeframe, int length, Action<object[]> action)
-		{
-			exchanges[exchange].CandleSubscribe(baseSymbol, quoteSymbol, timeframe, length, action);
-		}
-
-		public static List<QuoteItem> GetQuoteItems(string name, string symbol)
-		{
-			List<QuoteSymbol> quoteSymbols = new List<QuoteSymbol>();
-			foreach (var exchange in exchanges)
-			{
-				quoteSymbols.AddRange(exchange.Value.GetQuoteSymbols(name, symbol));
-			}
-			return Group(quoteSymbols);
-		}
-		
-		public class QuoteSymbol
-		{
-			public QuoteSymbol(string exchange, string quote)
-			{
-				Exchange = exchange;
-				Quote = quote;
-			}
-
-			public string Exchange { get; set; }
-			public string Quote { get; set; }
-
-		}
+		protected static MyEvent<PriceUpdate> priceSubscription = new MyEvent<PriceUpdate>();
+		protected static MyEvent<PriceUpdate> candleSubscription = new MyEvent<PriceUpdate>();
 
 		public static Timeframe StringToTimeframe(string timeframe)
 		{
 			switch (timeframe)
 			{
+				case "NONE":
+					return Timeframe.NONE;
 				case "1 minute":
 					return Timeframe.min1;
 				case "3 minutes":
@@ -149,6 +94,7 @@ namespace CryptoWatcher.APIs
 		{
 			switch (timeframe)
 			{
+				case Timeframe.NONE: return "NONE";
 				case Timeframe.min1: return "1 minute";
 				case Timeframe.min3: return "3 minutes";
 				case Timeframe.min5: return "5 minutes";
@@ -166,6 +112,8 @@ namespace CryptoWatcher.APIs
 			throw new ArgumentException();
 		}
 
+		//public abstract List<QuoteSymbol> GetQuoteSymbols(string name, string symbol);
+
 		protected static string GetEndpoint(List<string> param)
 		{
 			if (param.Count == 0)
@@ -176,6 +124,20 @@ namespace CryptoWatcher.APIs
 				endpoint += $"&{param[i]}";
 			}
 			return endpoint;
+		}
+
+		protected static T[] DeserializeToArray<T>(JToken jToken)
+		{
+			
+			JToken[] jTokens = jToken.Children().ToArray();
+
+			// serialize JSON results into .NET objects
+			T[] objects = new T[jTokens.Length];
+			for (int i = 0; i < jTokens.Length; i++)
+			{
+				objects[i] = jTokens[i].ToObject<T>();
+			}
+			return objects;
 		}
 
 		/// <exception cref="OutOfMemoryException"></exception>
@@ -198,27 +160,6 @@ namespace CryptoWatcher.APIs
 		protected async virtual Task<T> Deserialize<T>(string url)
 		{
 			return (await GetJObject(url)).ToObject<T>();
-		}
-
-		protected static T[] DeserializeToArray<T>(JToken jToken)
-		{
-			try
-			{
-				JToken[] jTokens = jToken.Children().ToArray();
-
-				// serialize JSON results into .NET objects
-				T[] objects = new T[jTokens.Length];
-				for (int i = 0; i < jTokens.Length; i++)
-				{
-					objects[i] = jTokens[i].ToObject<T>();
-				}
-				return objects;
-			}
-			catch
-			{
-				throw;
-			}
-
 		}
 
 		/// <exception cref="NotSupportedException"></exception>
@@ -244,11 +185,15 @@ namespace CryptoWatcher.APIs
 				var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
 				return httpResponse.GetResponseStream();
 			}
-			catch
+			catch (WebException)
 			{
-				throw;
+				for (int i = 0; i < 3; i++)
+				{
+					await Task.Delay(1000);
+					return await GetResponseStream(url);
+				}
 			}
-
+			throw new Exception("Couldn't get response from server.");
 		}
 
 		/// <exception cref="OutOfMemoryException"></exception>
@@ -265,39 +210,20 @@ namespace CryptoWatcher.APIs
 		/// <exception cref="ObjectDisposedException"></exception>
 		protected virtual async Task<JObject> GetJObject(string url)
 		{
-			try
-			{
-				StreamReader sr = new StreamReader(await GetResponseStream(url));
-				string response = sr.ReadToEnd();
-				JObject jObject = JObject.Parse(response);
-				sr.Close();
-				return jObject;
-			}
-			catch
-			{
-				throw;
-			}
+			StreamReader sr = new StreamReader(await GetResponseStream(url));
+			string response = sr.ReadToEnd();
+			JObject jObject = JObject.Parse(response);
+			sr.Close();
+			return jObject;
 		}
 
 		protected virtual async Task<JToken> GetJToken(string url)
 		{
-			// trying 3 times because we can have bad connection
-			for (int i = 0; i < 3; i++)
-			{
-				try
-				{
-					StreamReader sr = new StreamReader(await GetResponseStream(url));
-					string response = sr.ReadToEnd();
-					JToken jToken = JToken.Parse(response);
-					sr.Close();
-					return jToken;
-				}
-				catch (WebException)
-				{
-					await Task.Delay(1000);
-				}
-			}
-			throw new Exception("Couldn't get response from server.");
+			StreamReader sr = new StreamReader(await GetResponseStream(url));
+			string response = sr.ReadToEnd();
+			JToken jToken = JToken.Parse(response);
+			sr.Close();
+			return jToken;
 		}
 
 		private static List<QuoteItem> Group(List<QuoteSymbol> quoteSymbols)
@@ -322,21 +248,33 @@ namespace CryptoWatcher.APIs
 			}
 			return quoteItems;
 		}
+
+		public struct QuoteSymbol
+		{
+			public QuoteSymbol(string exchange, string quote)
+			{
+				Exchange = exchange;
+				Quote = quote;
+			}
+
+			public string Exchange { get; set; }
+			public string Quote { get; set; }
+		}
 	}
 
 	public class Candlestick
 	{
 		[JsonProperty("time")]
-		public int openTime;
-		public float open;
-		public float high;
-		public float low;
-		public float close;
+		public int openTime { get; set; }
+		public float open { get; set; }
+		public float high { get; set; }
+		public float low { get; set; }
+		public float close { get; set; }
 		/// <summary>
 		/// Volume in quote currency.
 		/// </summary>
 		[JsonProperty("volumeto")]
-		public float volume;
+		public float volume { get; set; }
 
 		public Candlestick(int closeTime, float open, float high, float low, float close, float volume)
 		{
@@ -351,6 +289,21 @@ namespace CryptoWatcher.APIs
 		public static Candlestick operator *(Candlestick a, Candlestick b)
 		{
 			return new Candlestick(a.openTime, a.open * b.open, a.high * b.high, a.low * b.low, a.close * b.close, a.volume);
+		}
+	}
+
+	public struct ExchangeItem
+	{
+		public ExchangeItem(string exchangeName)
+		{
+			Exchange = exchangeName;
+		}
+
+		public string Exchange { get; set; }
+
+		public override string ToString()
+		{
+			return Exchange;
 		}
 	}
 
@@ -369,21 +322,6 @@ namespace CryptoWatcher.APIs
 		public override string ToString()
 		{
 			return Quote;
-		}
-	}
-
-	public class ExchangeItem
-	{
-		public ExchangeItem(string exchangeName)
-		{
-			Exchange = exchangeName;
-		}
-
-		public string Exchange { get; set; }
-
-		public override string ToString()
-		{
-			return Exchange;
 		}
 	}
 }

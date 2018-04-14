@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,6 +53,10 @@ namespace UpdateCreator
 
 		private void AddRequiredFiles()
 		{
+			if (!Directory.Exists(Paths.ProjectPath + @"\Update"))
+				Directory.CreateDirectory(Paths.ProjectPath + @"\Update");
+			if (!Directory.Exists(Paths.ProjectPath + @"\Update\Files"))
+				Directory.CreateDirectory(Paths.ProjectPath + @"\Update\Files");
 			string downloadPath = Paths.ProjectPath + @"\Update\Files";
 			DirectoryInfo downloadLocation = new DirectoryInfo(downloadPath);
 
@@ -71,8 +76,12 @@ namespace UpdateCreator
 				}
 			}
 			// gets previous version id from \Update\VersionInfo.txt
-			VersionInfo versionInfo = JsonConvert.DeserializeObject<VersionInfo>(File.ReadAllText(Paths.VersionInfoPath));
-			Id = versionInfo.Id + 1;
+			if (File.Exists(Paths.VersionInfoPath))
+			{
+				VersionInfo versionInfo = JsonConvert.DeserializeObject<VersionInfo>(File.ReadAllText(Paths.VersionInfoPath));
+				Id = versionInfo.Id + 1;
+			} else
+				Id = 0;
 
 			// need to write thes every time you create version
 			Changelog = GetChangelog();
@@ -94,13 +103,13 @@ namespace UpdateCreator
 		private string GetVersionName()
 		{
 			// Write version name here.
-			return "1.0.0-alpha.2";
+			return AssemblyName.GetAssemblyName(Paths.ProgramDirPath + @"\CryptoWatcher.exe").Version.ToString();
 		}
 
 		private string GetChangelog()
 		{
 			// Write changelog here.
-			return "Testing new launcher.";
+			return "Added indicator alerts: RSI, MACD, Stoch and are fully customizable. \n Prices now update instantly and are available for all exchanges across all trading pairs. \n Better update system. Merged launcher into one program. \n PLEASE REINSTALL APP for merge to take effect.";
 		}
 
 		private void PopulateData()

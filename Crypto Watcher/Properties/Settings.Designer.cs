@@ -49,7 +49,7 @@ namespace CryptoWatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2.0.0-alpha.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
         public string CurrentVersion {
             get {
                 return ((string)(this["CurrentVersion"]));
@@ -61,7 +61,7 @@ namespace CryptoWatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int CurrentVersionId {
             get {
                 return ((int)(this["CurrentVersionId"]));

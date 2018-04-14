@@ -1,7 +1,6 @@
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\CryptoWatcher.exe.config
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\CryptoWatcher.exe
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\CryptoWatcher.pdb
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Common.Logging.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\MetroFramework.Design.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\MetroFramework.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\MetroFramework.Fonts.dll
@@ -16,7 +15,6 @@ D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Relea
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto Watcher.csproj.CoreCompileInputs.cache
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.exe
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.pdb
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto Watcher.csprojResolveAssemblyReference.cache
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Newtonsoft.Json.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Tulpep.NotificationWindow.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\Newtonsoft.Json.xml
@@ -127,5 +125,5 @@ D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Relea
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\System.Collections.Immutable.xml
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto Watcher.csproj.CryptoWatcher.exe.config
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.Alerts.AlertFormEditor.resources
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\CryptoWatcher.Launcher.LauncherForm.resources
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Release\Crypto Watcher.csprojResolveAssemblyReference.cache

@@ -16,12 +16,10 @@ D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.xml
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Newtonsoft.Json.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Newtonsoft.Json.xml
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csprojResolveAssemblyReference.cache
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.CustomAlertForm.resources
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.Properties.Resources.resources
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Tulpep.NotificationWindow.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.MainForm.resources
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.Alerts.AlertFormEditor.resources
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.CryptoWatcher.exe.config
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Security.Cryptography.Algorithms.dll
@@ -128,3 +126,4 @@ D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\SocketIoClientDotNet.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\SuperSocket.ClientEngine.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.Launcher.LauncherForm.resources
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csprojResolveAssemblyReference.cache

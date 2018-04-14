@@ -770,8 +770,7 @@
 
 //namespace CryptoWatcher
 //{
-//	// TODO: implement network conection indicator and no network exception
-//	// TODO: when binance is selected notify user that we compare symbol not name (BCC BitConnect = BCC Bitcoin Cash on binance)
+//	// NOTE: when binance is selected notify user that we compare symbol not name (BCC BitConnect = BCC Bitcoin Cash on binance)
 //	public partial class CustomAlertForm : MetroFramework.Forms.MetroForm
 //	{
 //		string baseName;
