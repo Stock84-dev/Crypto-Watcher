@@ -1,45 +1,59 @@
-﻿/******************************************************************************
- * CRYPTO WATCHER - cryptocurrency alert system that notifies you when certain 
- * cryptocurrency fulfills your condition.
- * Copyright (c) 2017 Stock84-dev
- * https://github.com/Stock84-dev/Crypto-Watcher
- *
- * This file is part of CRYPTO WATCHER.
- *
- * CRYPTO WATCHER is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * CRYPTO WATCHER is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with CRYPTO WATCHER.  If not, see <http://www.gnu.org/licenses/>.
- *****************************************************************************/
+﻿/* Order of items within a class, struct or interface: (SA1201 and SA1203)
+
+Constant Fields
+Fields
+Constructors
+Finalizers (Destructors)
+Delegates
+Events
+Enums
+Interfaces
+Properties
+Indexers
+Methods
+Structs
+Classes
+
+Within each of these groups order by access: (SA1202)
+public
+internal
+protected internal
+protected
+private
+
+Within each of the access groups, order by static, then non-static: (SA1204)
+static
+non-static
+
+Within each of the static/non-static groups of fields, order by readonly, then non-readonly : (SA1214 and SA1215)
+readonly
+non-readonly
+*/
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using CryptoWatcher.Launcher;
+using System.Diagnostics;
 
 namespace CryptoWatcher
 {
     static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
+		
+		/// <summary>
+		/// The main entry point for the application.
+		/// </summary>
+		[STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
-        }
+			Application.SetCompatibleTextRenderingDefault(false);
+			LauncherForm launcherForm = new LauncherForm();
+			Application.Run(launcherForm);
+			if (launcherForm.ShowMainForm)
+				Application.Run(new MainForm());
+		}
     }
 }

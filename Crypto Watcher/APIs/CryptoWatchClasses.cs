@@ -1,11 +1,30 @@
-﻿// Copyright(c) 2017 Stock84-dev
-// https://github.com/Stock84-dev/Cryptowatch-API
+﻿/******************************************************************************
+ * CRYPTO WATCHER - cryptocurrency alert system that notifies you when certain 
+ * cryptocurrency fulfills your condition.
+ * Copyright (c) 2017-2018 Stock84-dev
+ * https://github.com/Stock84-dev/Crypto-Watcher
+ *
+ * This file is part of CRYPTO WATCHER.
+ *
+ * CRYPTO WATCHER is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CRYPTO WATCHER is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with CRYPTO WATCHER.  If not, see <http://www.gnu.org/licenses/>.
+ *****************************************************************************/
 
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
 
-namespace APIs
+namespace CryptoWatcher.APIs
 {
 	public class SiteInformation
 	{
@@ -232,27 +251,7 @@ namespace APIs
 		}
 	}
 
-	public enum TimeFrame { min1 = 60, min3 = 180, min5 = 300, min15 = 900, min30 = 1800, h1 = 3600, h2 = 7200, h4 = 14400, h6 = 21600, h12 = 43200, d1 = 86400, d3 = 259200, w1 = 604800 }
-
-	public class Candlestick
-	{
-		public long closeTime;
-		public float openPrice;
-		public float highPrice;
-		public float lowPrice;
-		public float closePrice;
-		public float volume;
-
-		public Candlestick(long closeTime, float openPrice, float highPrice, float lowPrice, float closePrice, float volume)
-		{
-			this.closeTime = closeTime;
-			this.openPrice = openPrice;
-			this.highPrice = highPrice;
-			this.lowPrice = lowPrice;
-			this.closePrice = closePrice;
-			this.volume = volume;
-		}
-	}
+	public enum Timeframe { NONE, min1 = 60, min3 = 180, min5 = 300, min15 = 900, min30 = 1800, h1 = 3600, h2 = 7200, h4 = 14400, h6 = 21600, h12 = 43200, d1 = 86400, d3 = 259200, w1 = 604800 }
 
 	public class Allowance
 	{

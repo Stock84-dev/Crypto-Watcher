@@ -30,21 +30,21 @@
         {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CustomAlertForm));
 			this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
-			this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
 			this.chcBoxWindowsMsg = new MetroFramework.Controls.MetroCheckBox();
 			this.cBoxInterval = new MetroFramework.Controls.MetroComboBox();
+			this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
 			this.btnAddAlert = new MetroFramework.Controls.MetroButton();
+			this.tabControl = new MetroFramework.Controls.MetroTabControl();
+			this.tabCondition = new MetroFramework.Controls.MetroTabPage();
+			this.metroPanel1 = new MetroFramework.Controls.MetroPanel();
+			this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
+			this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
+			this.cboxExchange = new MetroFramework.Controls.MetroComboBox();
+			this.cboxMarket = new MetroFramework.Controls.MetroComboBox();
 			this.txtSymbol = new MetroFramework.Controls.MetroTextBox();
 			this.cboxCondition = new MetroFramework.Controls.MetroComboBox();
 			this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
-			this.txtPrice = new MetroFramework.Controls.MetroTextBox();
-			this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
-			this.cboxExchange = new MetroFramework.Controls.MetroComboBox();
-			this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
-			this.cboxMarket = new MetroFramework.Controls.MetroComboBox();
-			this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
-			this.tabControl = new MetroFramework.Controls.MetroTabControl();
-			this.tabCondition = new MetroFramework.Controls.MetroTabPage();
+			this.panel = new MetroFramework.Controls.MetroPanel();
 			this.tabNotification = new MetroFramework.Controls.MetroTabPage();
 			this.lblInterval = new MetroFramework.Controls.MetroLabel();
 			this.txtInterval = new MetroFramework.Controls.MetroTextBox();
@@ -52,12 +52,11 @@
 			this.metroLabel6 = new MetroFramework.Controls.MetroLabel();
 			this.cBoxSound = new MetroFramework.Controls.MetroComboBox();
 			this.chcBoxShowWindow = new MetroFramework.Controls.MetroCheckBox();
-			this.lblError = new MetroFramework.Controls.MetroLabel();
-			this.pBox5Min = new System.Windows.Forms.PictureBox();
+			this.lblError = new System.Windows.Forms.Label();
 			this.tabControl.SuspendLayout();
 			this.tabCondition.SuspendLayout();
+			this.metroPanel1.SuspendLayout();
 			this.tabNotification.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pBox5Min)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// metroToolTip1
@@ -65,17 +64,6 @@
 			this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
 			this.metroToolTip1.StyleManager = null;
 			this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
-			// 
-			// metroLabel1
-			// 
-			this.metroLabel1.AutoSize = true;
-			this.metroLabel1.Location = new System.Drawing.Point(6, 17);
-			this.metroLabel1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.metroLabel1.Name = "metroLabel1";
-			this.metroLabel1.Size = new System.Drawing.Size(87, 19);
-			this.metroLabel1.TabIndex = 9;
-			this.metroLabel1.Text = "Coin Symbol:";
-			this.metroToolTip1.SetToolTip(this.metroLabel1, "Use coin symbol from coinmarketcap.com");
 			// 
 			// chcBoxWindowsMsg
 			// 
@@ -110,9 +98,21 @@
 			this.cBoxInterval.UseSelectable = true;
 			this.cBoxInterval.Visible = false;
 			// 
+			// metroLabel1
+			// 
+			this.metroLabel1.AutoSize = true;
+			this.metroLabel1.Location = new System.Drawing.Point(2, 11);
+			this.metroLabel1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+			this.metroLabel1.Name = "metroLabel1";
+			this.metroLabel1.Size = new System.Drawing.Size(87, 19);
+			this.metroLabel1.TabIndex = 31;
+			this.metroLabel1.Text = "Coin Symbol:";
+			this.metroToolTip1.SetToolTip(this.metroLabel1, "Use coin symbol from coinmarketcap.com");
+			// 
 			// btnAddAlert
 			// 
-			this.btnAddAlert.Location = new System.Drawing.Point(130, 264);
+			this.btnAddAlert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.btnAddAlert.Location = new System.Drawing.Point(130, 233);
 			this.btnAddAlert.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.btnAddAlert.Name = "btnAddAlert";
 			this.btnAddAlert.Size = new System.Drawing.Size(124, 26);
@@ -120,6 +120,103 @@
 			this.btnAddAlert.Text = "Add";
 			this.btnAddAlert.UseSelectable = true;
 			this.btnAddAlert.Click += new System.EventHandler(this.btnAddAlert_Click);
+			// 
+			// tabControl
+			// 
+			this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tabControl.Controls.Add(this.tabCondition);
+			this.tabControl.Controls.Add(this.tabNotification);
+			this.tabControl.Location = new System.Drawing.Point(21, 26);
+			this.tabControl.Name = "tabControl";
+			this.tabControl.SelectedIndex = 0;
+			this.tabControl.Size = new System.Drawing.Size(722, 204);
+			this.tabControl.TabIndex = 19;
+			this.tabControl.UseSelectable = true;
+			// 
+			// tabCondition
+			// 
+			this.tabCondition.Controls.Add(this.metroPanel1);
+			this.tabCondition.Controls.Add(this.panel);
+			this.tabCondition.HorizontalScrollbarBarColor = true;
+			this.tabCondition.HorizontalScrollbarHighlightOnWheel = false;
+			this.tabCondition.HorizontalScrollbarSize = 10;
+			this.tabCondition.Location = new System.Drawing.Point(4, 38);
+			this.tabCondition.Name = "tabCondition";
+			this.tabCondition.Size = new System.Drawing.Size(714, 162);
+			this.tabCondition.TabIndex = 0;
+			this.tabCondition.Text = "Condition";
+			this.tabCondition.VerticalScrollbarBarColor = true;
+			this.tabCondition.VerticalScrollbarHighlightOnWheel = false;
+			this.tabCondition.VerticalScrollbarSize = 10;
+			// 
+			// metroPanel1
+			// 
+			this.metroPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+			this.metroPanel1.Controls.Add(this.metroLabel4);
+			this.metroPanel1.Controls.Add(this.metroLabel5);
+			this.metroPanel1.Controls.Add(this.cboxExchange);
+			this.metroPanel1.Controls.Add(this.cboxMarket);
+			this.metroPanel1.Controls.Add(this.metroLabel1);
+			this.metroPanel1.Controls.Add(this.txtSymbol);
+			this.metroPanel1.Controls.Add(this.cboxCondition);
+			this.metroPanel1.Controls.Add(this.metroLabel2);
+			this.metroPanel1.HorizontalScrollbarBarColor = true;
+			this.metroPanel1.HorizontalScrollbarHighlightOnWheel = false;
+			this.metroPanel1.HorizontalScrollbarSize = 10;
+			this.metroPanel1.Location = new System.Drawing.Point(4, 7);
+			this.metroPanel1.Name = "metroPanel1";
+			this.metroPanel1.Size = new System.Drawing.Size(268, 152);
+			this.metroPanel1.TabIndex = 22;
+			this.metroPanel1.VerticalScrollbarBarColor = true;
+			this.metroPanel1.VerticalScrollbarHighlightOnWheel = false;
+			this.metroPanel1.VerticalScrollbarSize = 10;
+			// 
+			// metroLabel4
+			// 
+			this.metroLabel4.AutoSize = true;
+			this.metroLabel4.Location = new System.Drawing.Point(22, 128);
+			this.metroLabel4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+			this.metroLabel4.Name = "metroLabel4";
+			this.metroLabel4.Size = new System.Drawing.Size(67, 19);
+			this.metroLabel4.TabIndex = 33;
+			this.metroLabel4.Text = "Exchange:";
+			// 
+			// metroLabel5
+			// 
+			this.metroLabel5.AutoSize = true;
+			this.metroLabel5.Location = new System.Drawing.Point(36, 89);
+			this.metroLabel5.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+			this.metroLabel5.Name = "metroLabel5";
+			this.metroLabel5.Size = new System.Drawing.Size(53, 19);
+			this.metroLabel5.TabIndex = 34;
+			this.metroLabel5.Text = "Market:";
+			// 
+			// cboxExchange
+			// 
+			this.cboxExchange.FormattingEnabled = true;
+			this.cboxExchange.ItemHeight = 23;
+			this.cboxExchange.Location = new System.Drawing.Point(101, 118);
+			this.cboxExchange.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+			this.cboxExchange.Name = "cboxExchange";
+			this.cboxExchange.Size = new System.Drawing.Size(124, 29);
+			this.cboxExchange.TabIndex = 30;
+			this.cboxExchange.UseSelectable = true;
+			// 
+			// cboxMarket
+			// 
+			this.cboxMarket.FormattingEnabled = true;
+			this.cboxMarket.IntegralHeight = false;
+			this.cboxMarket.ItemHeight = 23;
+			this.cboxMarket.Location = new System.Drawing.Point(101, 79);
+			this.cboxMarket.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+			this.cboxMarket.Name = "cboxMarket";
+			this.cboxMarket.Size = new System.Drawing.Size(124, 29);
+			this.cboxMarket.TabIndex = 29;
+			this.cboxMarket.UseSelectable = true;
+			this.cboxMarket.SelectedIndexChanged += new System.EventHandler(this.cboxMarket_SelectedIndexChanged);
 			// 
 			// txtSymbol
 			// 
@@ -139,7 +236,7 @@
 			this.txtSymbol.CustomButton.UseSelectable = true;
 			this.txtSymbol.CustomButton.Visible = false;
 			this.txtSymbol.Lines = new string[0];
-			this.txtSymbol.Location = new System.Drawing.Point(105, 7);
+			this.txtSymbol.Location = new System.Drawing.Point(101, 1);
 			this.txtSymbol.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.txtSymbol.MaxLength = 32767;
 			this.txtSymbol.Name = "txtSymbol";
@@ -150,162 +247,49 @@
 			this.txtSymbol.SelectionStart = 0;
 			this.txtSymbol.ShortcutsEnabled = true;
 			this.txtSymbol.Size = new System.Drawing.Size(124, 29);
-			this.txtSymbol.TabIndex = 0;
+			this.txtSymbol.TabIndex = 27;
 			this.txtSymbol.UseSelectable = true;
 			this.txtSymbol.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
 			this.txtSymbol.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
-			this.txtSymbol.Leave += new System.EventHandler(this.txtSymbol_LeaveAsync);
+			this.txtSymbol.TextChanged += new System.EventHandler(this.txtSymbol_TextChanged);
 			// 
 			// cboxCondition
 			// 
 			this.cboxCondition.FormattingEnabled = true;
 			this.cboxCondition.ItemHeight = 23;
-			this.cboxCondition.Items.AddRange(new object[] {
-            "Higher than",
-            "Higher or equal than",
-            "Lower than",
-            "Lower or equal than"});
-			this.cboxCondition.Location = new System.Drawing.Point(105, 46);
+			this.cboxCondition.Location = new System.Drawing.Point(101, 40);
 			this.cboxCondition.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.cboxCondition.Name = "cboxCondition";
 			this.cboxCondition.Size = new System.Drawing.Size(124, 29);
-			this.cboxCondition.TabIndex = 1;
+			this.cboxCondition.TabIndex = 28;
 			this.cboxCondition.UseSelectable = true;
-			this.cboxCondition.Enter += new System.EventHandler(this.cboxCondition_Enter);
+			this.cboxCondition.SelectedIndexChanged += new System.EventHandler(this.cboxCondition_SelectedIndexChanged);
 			// 
 			// metroLabel2
 			// 
 			this.metroLabel2.AutoSize = true;
-			this.metroLabel2.Location = new System.Drawing.Point(24, 56);
+			this.metroLabel2.Location = new System.Drawing.Point(20, 50);
 			this.metroLabel2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.metroLabel2.Name = "metroLabel2";
 			this.metroLabel2.Size = new System.Drawing.Size(69, 19);
-			this.metroLabel2.TabIndex = 11;
+			this.metroLabel2.TabIndex = 32;
 			this.metroLabel2.Text = "Condition:";
 			// 
-			// txtPrice
+			// panel
 			// 
-			// 
-			// 
-			// 
-			this.txtPrice.CustomButton.Image = null;
-			this.txtPrice.CustomButton.Location = new System.Drawing.Point(96, 1);
-			this.txtPrice.CustomButton.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.txtPrice.CustomButton.Name = "";
-			this.txtPrice.CustomButton.Size = new System.Drawing.Size(27, 27);
-			this.txtPrice.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-			this.txtPrice.CustomButton.TabIndex = 1;
-			this.txtPrice.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-			this.txtPrice.CustomButton.UseSelectable = true;
-			this.txtPrice.CustomButton.Visible = false;
-			this.txtPrice.Lines = new string[0];
-			this.txtPrice.Location = new System.Drawing.Point(105, 124);
-			this.txtPrice.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.txtPrice.MaxLength = 32767;
-			this.txtPrice.Name = "txtPrice";
-			this.txtPrice.PasswordChar = '\0';
-			this.txtPrice.ScrollBars = System.Windows.Forms.ScrollBars.None;
-			this.txtPrice.SelectedText = "";
-			this.txtPrice.SelectionLength = 0;
-			this.txtPrice.SelectionStart = 0;
-			this.txtPrice.ShortcutsEnabled = true;
-			this.txtPrice.Size = new System.Drawing.Size(124, 29);
-			this.txtPrice.TabIndex = 3;
-			this.txtPrice.UseSelectable = true;
-			this.txtPrice.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-			this.txtPrice.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
-			// 
-			// metroLabel3
-			// 
-			this.metroLabel3.AutoSize = true;
-			this.metroLabel3.Location = new System.Drawing.Point(52, 134);
-			this.metroLabel3.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.metroLabel3.Name = "metroLabel3";
-			this.metroLabel3.Size = new System.Drawing.Size(41, 19);
-			this.metroLabel3.TabIndex = 13;
-			this.metroLabel3.Text = "Price:";
-			// 
-			// cboxExchange
-			// 
-			this.cboxExchange.FormattingEnabled = true;
-			this.cboxExchange.ItemHeight = 23;
-			this.cboxExchange.Location = new System.Drawing.Point(105, 163);
-			this.cboxExchange.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.cboxExchange.Name = "cboxExchange";
-			this.cboxExchange.Size = new System.Drawing.Size(124, 29);
-			this.cboxExchange.TabIndex = 4;
-			this.cboxExchange.UseSelectable = true;
-			this.cboxExchange.Enter += new System.EventHandler(this.cboxExchange_Enter);
-			// 
-			// metroLabel4
-			// 
-			this.metroLabel4.AutoSize = true;
-			this.metroLabel4.Location = new System.Drawing.Point(26, 173);
-			this.metroLabel4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.metroLabel4.Name = "metroLabel4";
-			this.metroLabel4.Size = new System.Drawing.Size(67, 19);
-			this.metroLabel4.TabIndex = 16;
-			this.metroLabel4.Text = "Exchange:";
-			// 
-			// cboxMarket
-			// 
-			this.cboxMarket.FormattingEnabled = true;
-			this.cboxMarket.IntegralHeight = false;
-			this.cboxMarket.ItemHeight = 23;
-			this.cboxMarket.Location = new System.Drawing.Point(105, 85);
-			this.cboxMarket.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.cboxMarket.Name = "cboxMarket";
-			this.cboxMarket.Size = new System.Drawing.Size(124, 29);
-			this.cboxMarket.TabIndex = 2;
-			this.cboxMarket.UseSelectable = true;
-			this.cboxMarket.Enter += new System.EventHandler(this.cboxMarket_Enter);
-			this.cboxMarket.Leave += new System.EventHandler(this.cboxMarket_LeaveAsync);
-			// 
-			// metroLabel5
-			// 
-			this.metroLabel5.AutoSize = true;
-			this.metroLabel5.Location = new System.Drawing.Point(40, 95);
-			this.metroLabel5.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.metroLabel5.Name = "metroLabel5";
-			this.metroLabel5.Size = new System.Drawing.Size(53, 19);
-			this.metroLabel5.TabIndex = 18;
-			this.metroLabel5.Text = "Market:";
-			// 
-			// tabControl
-			// 
-			this.tabControl.Controls.Add(this.tabCondition);
-			this.tabControl.Controls.Add(this.tabNotification);
-			this.tabControl.Location = new System.Drawing.Point(21, 26);
-			this.tabControl.Name = "tabControl";
-			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(341, 235);
-			this.tabControl.TabIndex = 19;
-			this.tabControl.UseSelectable = true;
-			// 
-			// tabCondition
-			// 
-			this.tabCondition.Controls.Add(this.pBox5Min);
-			this.tabCondition.Controls.Add(this.metroLabel4);
-			this.tabCondition.Controls.Add(this.metroLabel5);
-			this.tabCondition.Controls.Add(this.cboxExchange);
-			this.tabCondition.Controls.Add(this.metroLabel3);
-			this.tabCondition.Controls.Add(this.cboxMarket);
-			this.tabCondition.Controls.Add(this.txtPrice);
-			this.tabCondition.Controls.Add(this.metroLabel1);
-			this.tabCondition.Controls.Add(this.txtSymbol);
-			this.tabCondition.Controls.Add(this.cboxCondition);
-			this.tabCondition.Controls.Add(this.metroLabel2);
-			this.tabCondition.HorizontalScrollbarBarColor = true;
-			this.tabCondition.HorizontalScrollbarHighlightOnWheel = false;
-			this.tabCondition.HorizontalScrollbarSize = 10;
-			this.tabCondition.Location = new System.Drawing.Point(4, 38);
-			this.tabCondition.Name = "tabCondition";
-			this.tabCondition.Size = new System.Drawing.Size(333, 193);
-			this.tabCondition.TabIndex = 0;
-			this.tabCondition.Text = "Condition";
-			this.tabCondition.VerticalScrollbarBarColor = true;
-			this.tabCondition.VerticalScrollbarHighlightOnWheel = false;
-			this.tabCondition.VerticalScrollbarSize = 10;
+			this.panel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel.HorizontalScrollbarBarColor = true;
+			this.panel.HorizontalScrollbarHighlightOnWheel = false;
+			this.panel.HorizontalScrollbarSize = 10;
+			this.panel.Location = new System.Drawing.Point(278, 7);
+			this.panel.Name = "panel";
+			this.panel.Size = new System.Drawing.Size(433, 152);
+			this.panel.TabIndex = 21;
+			this.panel.VerticalScrollbarBarColor = true;
+			this.panel.VerticalScrollbarHighlightOnWheel = false;
+			this.panel.VerticalScrollbarSize = 10;
+			this.panel.Visible = false;
 			// 
 			// tabNotification
 			// 
@@ -322,7 +306,7 @@
 			this.tabNotification.HorizontalScrollbarSize = 10;
 			this.tabNotification.Location = new System.Drawing.Point(4, 38);
 			this.tabNotification.Name = "tabNotification";
-			this.tabNotification.Size = new System.Drawing.Size(333, 193);
+			this.tabNotification.Size = new System.Drawing.Size(714, 162);
 			this.tabNotification.TabIndex = 1;
 			this.tabNotification.Text = "Notification";
 			this.tabNotification.VerticalScrollbarBarColor = true;
@@ -421,30 +405,18 @@
 			// lblError
 			// 
 			this.lblError.AutoSize = true;
-			this.lblError.Location = new System.Drawing.Point(21, 293);
+			this.lblError.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblError.ForeColor = System.Drawing.Color.Red;
+			this.lblError.Location = new System.Drawing.Point(28, 244);
 			this.lblError.Name = "lblError";
-			this.lblError.Size = new System.Drawing.Size(0, 0);
+			this.lblError.Size = new System.Drawing.Size(0, 15);
 			this.lblError.TabIndex = 20;
-			// 
-			// pBox5Min
-			// 
-			this.pBox5Min.BackColor = System.Drawing.SystemColors.ControlLightLight;
-			this.pBox5Min.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-			this.pBox5Min.Image = global::CryptoWatcher.Properties.Resources._5min;
-			this.pBox5Min.Location = new System.Drawing.Point(238, 163);
-			this.pBox5Min.Name = "pBox5Min";
-			this.pBox5Min.Size = new System.Drawing.Size(34, 29);
-			this.pBox5Min.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.pBox5Min.TabIndex = 19;
-			this.pBox5Min.TabStop = false;
-			this.metroToolTip1.SetToolTip(this.pBox5Min, "Prices update every 5 minutes.");
-			this.pBox5Min.Visible = false;
 			// 
 			// CustomAlertForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(383, 318);
+			this.ClientSize = new System.Drawing.Size(764, 284);
 			this.Controls.Add(this.lblError);
 			this.Controls.Add(this.tabControl);
 			this.Controls.Add(this.btnAddAlert);
@@ -456,10 +428,10 @@
 			this.VisibleChanged += new System.EventHandler(this.CustomAlertForm_VisibleChanged);
 			this.tabControl.ResumeLayout(false);
 			this.tabCondition.ResumeLayout(false);
-			this.tabCondition.PerformLayout();
+			this.metroPanel1.ResumeLayout(false);
+			this.metroPanel1.PerformLayout();
 			this.tabNotification.ResumeLayout(false);
 			this.tabNotification.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pBox5Min)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -468,16 +440,6 @@
         #endregion
         private MetroFramework.Components.MetroToolTip metroToolTip1;
         private MetroFramework.Controls.MetroButton btnAddAlert;
-        private MetroFramework.Controls.MetroTextBox txtSymbol;
-        private MetroFramework.Controls.MetroLabel metroLabel1;
-        private MetroFramework.Controls.MetroComboBox cboxCondition;
-        private MetroFramework.Controls.MetroLabel metroLabel2;
-        private MetroFramework.Controls.MetroTextBox txtPrice;
-        private MetroFramework.Controls.MetroLabel metroLabel3;
-		private MetroFramework.Controls.MetroComboBox cboxExchange;
-		private MetroFramework.Controls.MetroLabel metroLabel4;
-		private MetroFramework.Controls.MetroComboBox cboxMarket;
-		private MetroFramework.Controls.MetroLabel metroLabel5;
 		private MetroFramework.Controls.MetroTabControl tabControl;
 		private MetroFramework.Controls.MetroTabPage tabCondition;
 		private MetroFramework.Controls.MetroTabPage tabNotification;
@@ -489,7 +451,16 @@
 		private MetroFramework.Controls.MetroTextBox txtInterval;
 		private MetroFramework.Controls.MetroCheckBox chcBoxRepeatable;
 		private MetroFramework.Controls.MetroLabel lblInterval;
-		private MetroFramework.Controls.MetroLabel lblError;
-		private System.Windows.Forms.PictureBox pBox5Min;
+		private MetroFramework.Controls.MetroPanel panel;
+		private MetroFramework.Controls.MetroPanel metroPanel1;
+		private MetroFramework.Controls.MetroLabel metroLabel4;
+		private MetroFramework.Controls.MetroLabel metroLabel5;
+		private MetroFramework.Controls.MetroComboBox cboxExchange;
+		private MetroFramework.Controls.MetroComboBox cboxMarket;
+		private MetroFramework.Controls.MetroLabel metroLabel1;
+		private MetroFramework.Controls.MetroTextBox txtSymbol;
+		private MetroFramework.Controls.MetroComboBox cboxCondition;
+		private MetroFramework.Controls.MetroLabel metroLabel2;
+		private System.Windows.Forms.Label lblError;
 	}
 }

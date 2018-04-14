@@ -26,24 +26,48 @@ namespace CryptoWatcher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool playSound {
+        public bool PlaySound {
             get {
-                return ((bool)(this["playSound"]));
+                return ((bool)(this["PlaySound"]));
             }
             set {
-                this["playSound"] = value;
+                this["PlaySound"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool lookForUpdates {
+        public bool LookForUpdates {
             get {
-                return ((bool)(this["lookForUpdates"]));
+                return ((bool)(this["LookForUpdates"]));
             }
             set {
-                this["lookForUpdates"] = value;
+                this["LookForUpdates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
+        public string CurrentVersion {
+            get {
+                return ((string)(this["CurrentVersion"]));
+            }
+            set {
+                this["CurrentVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int CurrentVersionId {
+            get {
+                return ((int)(this["CurrentVersionId"]));
+            }
+            set {
+                this["CurrentVersionId"] = value;
             }
         }
     }
