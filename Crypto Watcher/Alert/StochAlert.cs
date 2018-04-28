@@ -67,7 +67,7 @@ namespace CryptoWatcher.Alert
 			((MetroComboBox)(panel.Controls["cBoxType"])).SelectedItem = _types[_type];
 			panel.Controls["txtK"].Text = _lengthK.ToString();
 			panel.Controls["txtD"].Text = _lengthD.ToString();
-			panel.Controls["txtSmooth"].Text = _lengthSmooth.ToString();
+			//panel.Controls["txtSmooth"].Text = _lengthSmooth.ToString();
 			panel.Controls["txtValue"].Text = _absoluteAlert.Trigger.ToString();
 			((MetroCheckBox)(panel.Controls["chcBoxTriggerType"])).Checked = _isDTrigger;
 			((MetroComboBox)(panel.Controls["cBoxTimeframe"])).SelectedItem = AbstractAPI.TimeframeToString(timeframe);
@@ -101,11 +101,11 @@ namespace CryptoWatcher.Alert
 					System.Windows.Forms.MessageBox.Show("Something is wrong in length section.");
 					return false;
 				}
-				if (!int.TryParse(panel.Controls["txtSmooth"].Text.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out _lengthSmooth))
-				{
-					System.Windows.Forms.MessageBox.Show("Something is wrong in length section.");
-					return false;
-				}
+				//if (!int.TryParse(panel.Controls["txtSmooth"].Text.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out _lengthSmooth))
+				//{
+				//	System.Windows.Forms.MessageBox.Show("Something is wrong in length section.");
+				//	return false;
+				//}
 				if (_lengthD < 1 || _lengthK < 1 || _lengthSmooth < 1)
 				{
 					System.Windows.Forms.MessageBox.Show("Custom values must be positive.");
@@ -241,8 +241,8 @@ namespace CryptoWatcher.Alert
 			panel.Controls.Add(txtD);
 			panel.Controls.Add(lblK);
 			panel.Controls.Add(txtK);
-			panel.Controls.Add(lblSmooth);
-			panel.Controls.Add(txtSmooth);
+			//panel.Controls.Add(lblSmooth);
+			//panel.Controls.Add(txtSmooth);
 			panel.Controls.Add(chcBoxTriggerType);
 			// always shown
 			object[] controls = GetTimeFrameOptions();
