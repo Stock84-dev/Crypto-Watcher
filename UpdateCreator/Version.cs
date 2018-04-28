@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 /* Update algorithm
  * 
@@ -89,6 +90,16 @@ namespace UpdateCreator
 
 			// creates new dir in \Update\Versions\{versionName}
 			string versionDirPath = Paths.VersionsPath + @"\" + Name;
+			if (Directory.Exists(versionDirPath))
+			{
+				// making sure to not accidentally delete old version files
+				if (MessageBox.Show("Version files exist, continue?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+				{
+					Directory.Delete(versionDirPath, true);
+					Id--;
+				}
+				else return;
+			}
 			Directory.CreateDirectory(versionDirPath);
 
 			string versionInstructionsPath = versionDirPath + @"\" + Name + ".txt";
