@@ -1,3 +1,6 @@
+# Ignored folders
+/.vs/
+
 # User-specific files
 *.suo
 *.user
