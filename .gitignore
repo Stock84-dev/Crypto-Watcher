@@ -7,3 +7,13 @@
 /UpdateCreator/obj/
 /CryptoWatchSetup/bin/Debug/
 /CryptoWatchSetup/obj/
+
+
+.vs/
+packages/
+Crypto Watcher/bin/
+Crypto Watcher/obj/
+UpdateCreator/bin/
+UpdateCreator/obj/
+CryptoWatchSetup/bin/Debug/
+CryptoWatchSetup/obj/
