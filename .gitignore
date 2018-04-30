@@ -1,19 +1,13 @@
 # Ignored folders
-/.vs/
-/packages/
-/Crypto Watcher/bin/
-/Crypto Watcher/obj/
-/UpdateCreator/bin/
-/UpdateCreator/obj/
-/CryptoWatchSetup/bin/Debug/
-/CryptoWatchSetup/obj/
+/.vs/*
+# .vs/*
+packages/*
+/**/bin/
+/**/obj/
+CryptoWatcher/bin/Debug/*
+CryptoWatcher/obj/*
+UpdateCreator/bin/*
+UpdateCreator/obj/*
+CryptoWatchSetup/bin/Debug/*
+CryptoWatchSetup/obj/*
 
-
-.vs/
-packages/
-Crypto Watcher/bin/
-Crypto Watcher/obj/
-UpdateCreator/bin/
-UpdateCreator/obj/
-CryptoWatchSetup/bin/Debug/
-CryptoWatchSetup/obj/
