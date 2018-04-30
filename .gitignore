@@ -1,13 +1,10 @@
 # Ignored folders
-/.vs/*
-# .vs/*
+.vs/*
 packages/*
+# excludes all folders with that name everywhere
 /**/bin/
 /**/obj/
-CryptoWatcher/bin/Debug/*
-CryptoWatcher/obj/*
-UpdateCreator/bin/*
-UpdateCreator/obj/*
-CryptoWatchSetup/bin/Debug/*
-CryptoWatchSetup/obj/*
+
+# Ignored files
+*pdb
 
