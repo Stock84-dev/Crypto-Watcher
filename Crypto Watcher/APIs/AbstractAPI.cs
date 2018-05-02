@@ -36,7 +36,7 @@ namespace CryptoWatcher.APIs
 	public abstract class AbstractAPI
 	{
 		private static CryptoCompareAPI _CCCAG = new CryptoCompareAPI();
-		public static CryptoCompareAPI CryptoCompareAPI {get { return _CCCAG; } }
+		public static CryptoCompareAPI CryptoCompareAPI { get { return _CCCAG; } }
 		public static CoinMarketCapAPI CoinMarketCapAPI { get; } = new CoinMarketCapAPI();
 
 		protected static MyEvent<PriceUpdate> priceSubscription = new MyEvent<PriceUpdate>();
@@ -81,11 +81,11 @@ namespace CryptoWatcher.APIs
 		public static string[] GetTimeframes()
 		{
 			var values = Enum.GetValues(typeof(Timeframe)).Cast<Timeframe>().ToArray();
-			string[] types = new string[values.Count()-1];
+			string[] types = new string[values.Count() - 1];
 
 			for (int i = 1; i <= types.Length; i++)
 			{
-				types[i-1] = TimeframeToString(values[i]);
+				types[i - 1] = TimeframeToString(values[i]);
 			}
 			return types;
 		}
@@ -128,7 +128,7 @@ namespace CryptoWatcher.APIs
 
 		protected static T[] DeserializeToArray<T>(JToken jToken)
 		{
-			
+
 			JToken[] jTokens = jToken.Children().ToArray();
 
 			// serialize JSON results into .NET objects
@@ -160,6 +160,12 @@ namespace CryptoWatcher.APIs
 		protected async virtual Task<T> Deserialize<T>(string url)
 		{
 			return (await GetJObject(url)).ToObject<T>();
+		}
+
+		protected virtual async Task<string> GetResponseString(string url)
+		{
+			StreamReader sr = new StreamReader(await GetResponseStream(url));
+			return sr.ReadToEnd();
 		}
 
 		/// <exception cref="NotSupportedException"></exception>

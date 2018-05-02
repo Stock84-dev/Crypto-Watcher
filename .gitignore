@@ -1,6 +1,6 @@
 # Ignored folders
-.vs/*
-packages/*
+.vs/
+packages/
 # excludes all folders with that name everywhere
 /**/bin/
 /**/obj/

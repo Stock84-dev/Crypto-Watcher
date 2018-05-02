@@ -44,6 +44,8 @@ using System.Drawing;
 /* alt+w+m=close all tabs
  * ctrl+,=navigate to
  * CPU,GPU,RAM... prifiling = alt+F2
+ * ctrl+m+o = collapse declarations
+ * ctrl+m+l=expand declarations
  * */
 
 //https://cryptocoincharts.info/tools/api
@@ -202,7 +204,7 @@ namespace CryptoWatcher
         }
         #endregion
         // ****************************************************** Settings ************************************************************ //
-#region
+#region 
         private void chcBoxPlaySound_CheckedChanged(object sender, EventArgs e)
         {
             Settings.Default.PlaySound = chcBoxPlaySound.Checked;

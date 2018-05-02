@@ -37,6 +37,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CryptoWatcher.Launcher;
 using System.Diagnostics;
+using System.IO;
+using System.Net;
 
 namespace CryptoWatcher
 {
@@ -55,5 +57,5 @@ namespace CryptoWatcher
 			if (launcherForm.ShowMainForm)
 				Application.Run(new MainForm());
 		}
-    }
+	}
 }
