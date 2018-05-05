@@ -6,4 +6,5 @@ packages/
 /**/obj/
 
 # Ignored files
-*pdb
+*.pdb
+*.db
