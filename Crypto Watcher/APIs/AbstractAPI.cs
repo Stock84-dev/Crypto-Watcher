@@ -279,7 +279,7 @@ namespace CryptoWatcher.APIs
 		/// <summary>
 		/// Volume in quote currency.
 		/// </summary>
-		[JsonProperty("volumeto")]
+		[JsonProperty("volumefrom")]
 		public float volume { get; set; }
 
 		public Candlestick(int closeTime, float open, float high, float low, float close, float volume)

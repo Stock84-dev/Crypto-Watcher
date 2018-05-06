@@ -128,6 +128,7 @@ namespace CryptoWatcher
 				lblError.Text = "";
 				if (_editedAlertId == -1)
 					ActiveControl = txtSymbol;
+				_editedAlertId = -1;
 			}
 		}
 

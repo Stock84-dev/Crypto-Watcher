@@ -39,6 +39,7 @@ using CryptoWatcher.Launcher;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Globalization;
 
 namespace CryptoWatcher
 {
@@ -51,6 +52,7 @@ namespace CryptoWatcher
 		[STAThread]
         static void Main()
         {
+			
 			Application.SetCompatibleTextRenderingDefault(false);
 			LauncherForm launcherForm = new LauncherForm();
 			Application.Run(launcherForm);
