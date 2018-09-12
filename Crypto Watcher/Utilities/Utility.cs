@@ -51,5 +51,23 @@ namespace CryptoWatcher.Utilities
 			}
 			else return str;
 		}
+
+		public static List<string> SplitString(string str, char separator)
+		{
+			List<string> splits = new List<string>();
+			int separatorId = -1;
+
+			for (int i = 0; i < str.Length; i++)
+			{
+				if (str[i] == separator)
+				{
+					splits.Add(str.Substring(separatorId+1, i - separatorId-1));
+					separatorId = i;
+				}
+			}
+
+			splits.Add(str.Substring(separatorId + 1));
+			return splits;
+		}
 	}
 }

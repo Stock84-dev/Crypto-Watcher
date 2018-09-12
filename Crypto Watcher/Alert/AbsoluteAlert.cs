@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace CryptoWatcher.Alert
 {
-	enum TriggerType { crossing, lowerOrEqual, higherOrEqual, lower, higher  };
+	public enum TriggerType { crossing, lowerOrEqual, higherOrEqual, lower, higher  };
     /// <summary>
     /// Used for calculating conditions, not actual alert.
     /// </summary>
@@ -69,51 +69,6 @@ namespace CryptoWatcher.Alert
 		/// </summary>
 		public float Current { get { return current; } set { _previous = current; current = value; } }
 		public TriggerType Type { get; set; }
-
-		public static string ConditionToString(TriggerType type)
-		{
-			switch (type)
-			{
-				case TriggerType.higher:
-					return "Higher";
-				case TriggerType.higherOrEqual:
-					return "Higher or equal";
-				case TriggerType.lower:
-					return "Lower";
-				case TriggerType.lowerOrEqual:
-					return "Lower or equal";
-				case TriggerType.crossing:
-					return "Crossing";
-			}
-			throw new ArgumentException();
-		}
-
-		public static TriggerType StringToCondition(string type)
-		{
-			switch (type)
-			{
-				case "Higher": return TriggerType.higher;
-				case "Higher or equal": return TriggerType.higherOrEqual;
-				case "Lower": return TriggerType.lower;
-				case "Lower or equal": return TriggerType.lowerOrEqual;
-				case "Crossing": return TriggerType.crossing;
-			}
-			throw new ArgumentException();
-		}
-		/// <summary>
-		/// Converts all condition types to string.
-		/// </summary>
-		public static string[] GetConditions()
-		{
-			var values = Enum.GetValues(typeof(TriggerType)).Cast<TriggerType>().ToArray();
-			string[] types = new string[values.Count()];
-
-			for (int i = 0; i < types.Length; i++)
-			{
-				types[i] = ConditionToString(values[i]);
-			}
-			return types;
-		}
 
 		/// <summary>
 		/// Returns controls that is used for control panel when creating alert.
@@ -156,6 +111,52 @@ namespace CryptoWatcher.Alert
 			};
 
 			return new object[] { txtValue, cBoxCondition, metroLabel3, metroLabel7 };
+		}
+
+		/// <summary>
+		/// Converts all condition types to string.
+		/// </summary>
+		public static string[] GetConditions()
+		{
+			var values = Enum.GetValues(typeof(TriggerType)).Cast<TriggerType>().ToArray();
+			string[] types = new string[values.Count()];
+
+			for (int i = 0; i < types.Length; i++)
+			{
+				types[i] = ConditionToString(values[i]);
+			}
+			return types;
+		}
+
+		public static string ConditionToString(TriggerType type)
+		{
+			switch (type)
+			{
+				case TriggerType.higher:
+					return "Higher";
+				case TriggerType.higherOrEqual:
+					return "Higher or equal";
+				case TriggerType.lower:
+					return "Lower";
+				case TriggerType.lowerOrEqual:
+					return "Lower or equal";
+				case TriggerType.crossing:
+					return "Crossing";
+			}
+			throw new ArgumentException();
+		}
+
+		public static TriggerType StringToCondition(string type)
+		{
+			switch (type)
+			{
+				case "Higher": return TriggerType.higher;
+				case "Higher or equal": return TriggerType.higherOrEqual;
+				case "Lower": return TriggerType.lower;
+				case "Lower or equal": return TriggerType.lowerOrEqual;
+				case "Crossing": return TriggerType.crossing;
+			}
+			throw new ArgumentException();
 		}
 
 		/// <summary>

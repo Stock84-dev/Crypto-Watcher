@@ -41,7 +41,8 @@ namespace CryptoWatcher.Alert
 	abstract class AbstractAlert
 	{
 		// where alerts are saved on disk
-		private const string SAVE_PATH = "Saves/Alerts.txt";
+		private const string SAVE_DIR = "Saves/";
+		private const string SAVE_PATH = SAVE_DIR + "Alerts.txt";
 
 		private static IEnumerable<Type> _childClassTypes = null;
 		private static Task _allSubscribed;
@@ -141,14 +142,19 @@ namespace CryptoWatcher.Alert
 		// loads all alerts
 		public static async Task LoadAlertsAsync()
 		{
-			IOManager ioManager = new IOManager(SAVE_PATH);
-			if(!await ioManager.LoadByLineAsync(line =>
-			{
-				Alerts.Add(FromLine(line));
-			}))
-			{
+			if (!Directory.Exists(SAVE_DIR))
+				Directory.CreateDirectory(SAVE_DIR);
+			if (!File.Exists(SAVE_PATH))
 				File.Create(SAVE_PATH);
+			else
+			{
+				IOManager ioManager = new IOManager(SAVE_PATH);
+				await ioManager.LoadByLineAsync(line =>
+				{
+					Alerts.Add(FromLine(line));
+				});
 			}
+			
 			_allSubscribed = SubscribeAll();
 		}
 

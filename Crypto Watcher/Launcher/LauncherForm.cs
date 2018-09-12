@@ -35,6 +35,15 @@ using Newtonsoft.Json;
 
 namespace CryptoWatcher.Launcher
 {
+	/*
+	 *Get latest release file
+	 Octokit.GitHubClient client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Crypto-Watcher"));
+	var releases = client.Repository.Release.GetLatest("Stock84-dev", "Test").Result;
+	Console.WriteLine(releases.TagName);
+	WebClient wc = new WebClient();
+	wc.DownloadFile("https://github.com/Stock84-dev/Test/releases/download/" + releases.TagName + "/Controls.rar", "Update.rar");
+		 */
+
 	public partial class LauncherForm : MetroFramework.Forms.MetroForm
 	{
 		private const string BASE_UPDATE_PATH = /*"https://raw.githubusercontent.com/Stock84-dev/Crypto-Watcher/1.0.0-alpha.2/Update/";*/"https://raw.githubusercontent.com/Stock84-dev/Crypto-Watcher/master/Update/";

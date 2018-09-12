@@ -33,14 +33,106 @@ using Newtonsoft.Json;
 
 namespace CryptoWatcher.APIs
 {
+	public enum Timeframe { NONE, min1 = 60, min3 = 180, min5 = 300, min15 = 900, min30 = 1800, h1 = 3600, h2 = 7200, h4 = 14400, h6 = 21600, h8 = 28800, h12 = 43200, d1 = 86400, d3 = 259200, w1 = 604800, M1 = 2419200 }
+
 	public abstract class AbstractAPI
 	{
 		private static CryptoCompareAPI _CCCAG = new CryptoCompareAPI();
-		public static CryptoCompareAPI CryptoCompareAPI {get { return _CCCAG; } }
+		public static CryptoCompareAPI CryptoCompareAPI { get { return _CCCAG; } }
 		public static CoinMarketCapAPI CoinMarketCapAPI { get; } = new CoinMarketCapAPI();
 
 		protected static MyEvent<PriceUpdate> priceSubscription = new MyEvent<PriceUpdate>();
 		protected static MyEvent<PriceUpdate> candleSubscription = new MyEvent<PriceUpdate>();
+
+		//public abstract List<QuoteSymbol> GetQuoteSymbols(string name, string symbol);
+
+		protected static string GetEndpoint(List<string> param)
+		{
+			if (param.Count == 0)
+				return "";
+			string endpoint = $"?{param[0]}";
+			for (int i = 1; i < param.Count; i++)
+			{
+				endpoint += $"&{param[i]}";
+			}
+			return endpoint;
+		}
+
+		protected static T[] DeserializeToArray<T>(JToken jToken)
+		{
+
+			JToken[] jTokens = jToken.Children().ToArray();
+
+			// serialize JSON results into .NET objects
+			T[] objects = new T[jTokens.Length];
+			for (int i = 0; i < jTokens.Length; i++)
+			{
+				objects[i] = jTokens[i].ToObject<T>();
+			}
+			return objects;
+		}
+
+		/// <exception cref="OutOfMemoryException"></exception>
+		/// <exception cref="IOException"></exception>
+		/// <exception cref="JsonReaderException"></exception>
+		/// <exception cref="NotSupportedException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="System.Security.SecurityException"></exception>
+		/// <exception cref="UriFormatException"></exception>
+		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="ProtocolViolationException"></exception>
+		/// <exception cref="WebException"></exception>
+		/// <exception cref="ObjectDisposedException"></exception>
+		protected virtual T Deserialize<T>(JObject jObject)
+		{
+			return jObject.ToObject<T>();
+		}
+
+		protected async virtual Task<T> Deserialize<T>(string url)
+		{
+			return (await GetJObject(url)).ToObject<T>();
+		}
+
+		protected virtual async Task<string> GetResponseString(string url)
+		{
+			StreamReader sr = new StreamReader(await GetResponseStream(url));
+			return sr.ReadToEnd();
+		}
+
+		/// <exception cref="NotSupportedException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="System.Security.SecurityException"></exception>
+		/// <exception cref="UriFormatException"></exception>
+		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="ProtocolViolationException"></exception>
+		/// <exception cref="WebException"></exception>
+		/// <exception cref="ObjectDisposedException"></exception>
+		protected virtual async Task<Stream> GetResponseStream(string url)
+		{
+			try
+			{
+				var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+				httpWebRequest.ContentType = "application/json";
+				httpWebRequest.Accept = "*/*";
+				httpWebRequest.Method = "GET";
+				httpWebRequest.Timeout = 10000;
+				//httpWebRequest.Headers.Add("Authorization", "Basic reallylongstring");
+				//var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+				var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
+				return httpResponse.GetResponseStream();
+			}
+			catch (WebException)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					await Task.Delay(1000);
+					return await GetResponseStream(url);
+				}
+			}
+			throw new Exception("Couldn't get response from server.");
+		}
 
 		public static Timeframe StringToTimeframe(string timeframe)
 		{
@@ -81,11 +173,11 @@ namespace CryptoWatcher.APIs
 		public static string[] GetTimeframes()
 		{
 			var values = Enum.GetValues(typeof(Timeframe)).Cast<Timeframe>().ToArray();
-			string[] types = new string[values.Count()-1];
+			string[] types = new string[values.Count() - 1];
 
 			for (int i = 1; i <= types.Length; i++)
 			{
-				types[i-1] = TimeframeToString(values[i]);
+				types[i - 1] = TimeframeToString(values[i]);
 			}
 			return types;
 		}
@@ -110,90 +202,6 @@ namespace CryptoWatcher.APIs
 				case Timeframe.w1: return "1 week";
 			}
 			throw new ArgumentException();
-		}
-
-		//public abstract List<QuoteSymbol> GetQuoteSymbols(string name, string symbol);
-
-		protected static string GetEndpoint(List<string> param)
-		{
-			if (param.Count == 0)
-				return "";
-			string endpoint = $"?{param[0]}";
-			for (int i = 1; i < param.Count; i++)
-			{
-				endpoint += $"&{param[i]}";
-			}
-			return endpoint;
-		}
-
-		protected static T[] DeserializeToArray<T>(JToken jToken)
-		{
-			
-			JToken[] jTokens = jToken.Children().ToArray();
-
-			// serialize JSON results into .NET objects
-			T[] objects = new T[jTokens.Length];
-			for (int i = 0; i < jTokens.Length; i++)
-			{
-				objects[i] = jTokens[i].ToObject<T>();
-			}
-			return objects;
-		}
-
-		/// <exception cref="OutOfMemoryException"></exception>
-		/// <exception cref="IOException"></exception>
-		/// <exception cref="JsonReaderException"></exception>
-		/// <exception cref="NotSupportedException"></exception>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="System.Security.SecurityException"></exception>
-		/// <exception cref="UriFormatException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="InvalidOperationException"></exception>
-		/// <exception cref="ProtocolViolationException"></exception>
-		/// <exception cref="WebException"></exception>
-		/// <exception cref="ObjectDisposedException"></exception>
-		protected virtual T Deserialize<T>(JObject jObject)
-		{
-			return jObject.ToObject<T>();
-		}
-
-		protected async virtual Task<T> Deserialize<T>(string url)
-		{
-			return (await GetJObject(url)).ToObject<T>();
-		}
-
-		/// <exception cref="NotSupportedException"></exception>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="System.Security.SecurityException"></exception>
-		/// <exception cref="UriFormatException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="InvalidOperationException"></exception>
-		/// <exception cref="ProtocolViolationException"></exception>
-		/// <exception cref="WebException"></exception>
-		/// <exception cref="ObjectDisposedException"></exception>
-		protected virtual async Task<Stream> GetResponseStream(string url)
-		{
-			try
-			{
-				var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-				httpWebRequest.ContentType = "application/json";
-				httpWebRequest.Accept = "*/*";
-				httpWebRequest.Method = "GET";
-				httpWebRequest.Timeout = 10000;
-				//httpWebRequest.Headers.Add("Authorization", "Basic reallylongstring");
-				//var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-				var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-				return httpResponse.GetResponseStream();
-			}
-			catch (WebException)
-			{
-				for (int i = 0; i < 3; i++)
-				{
-					await Task.Delay(1000);
-					return await GetResponseStream(url);
-				}
-			}
-			throw new Exception("Couldn't get response from server.");
 		}
 
 		/// <exception cref="OutOfMemoryException"></exception>
@@ -265,7 +273,7 @@ namespace CryptoWatcher.APIs
 	public class Candlestick
 	{
 		[JsonProperty("time")]
-		public int openTime { get; set; }
+		public long Timestamp { get; set; }
 		public float open { get; set; }
 		public float high { get; set; }
 		public float low { get; set; }
@@ -273,22 +281,24 @@ namespace CryptoWatcher.APIs
 		/// <summary>
 		/// Volume in quote currency.
 		/// </summary>
-		[JsonProperty("volumeto")]
+		[JsonProperty("volumefrom")]
 		public float volume { get; set; }
 
-		public Candlestick(int closeTime, float open, float high, float low, float close, float volume)
+		public Candlestick(long timestamp, float open, float high, float low, float close, float volume)
 		{
-			this.openTime = closeTime;
+			this.Timestamp = timestamp;
 			this.open = open;
 			this.high = high;
 			this.low = low;
+			//if(close.HasValue)
 			this.close = close;
+			//else this.close
 			this.volume = volume;
 		}
 
 		public static Candlestick operator *(Candlestick a, Candlestick b)
 		{
-			return new Candlestick(a.openTime, a.open * b.open, a.high * b.high, a.low * b.low, a.close * b.close, a.volume);
+			return new Candlestick(a.Timestamp, a.open * b.open, a.high * b.high, a.low * b.low, a.close * b.close, a.volume);
 		}
 	}
 

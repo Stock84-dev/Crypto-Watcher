@@ -33,7 +33,6 @@ namespace CryptoWatcher.Alert
 {
 	class RSIAlert : AbstractAlert
 	{
-		private static readonly string[] _types = { "Overbought", "Oversold", "Custom" };
 		private AbsoluteAlert _absoluteAlert;
 		private int _length = 14;
 		private Source _source = Source.close;
@@ -51,6 +50,7 @@ namespace CryptoWatcher.Alert
 
 		private enum Source { open, high, low, close };
 
+		public static string[] Types { get { return new string[] { "Overbought", "Oversold", "Custom" }; } }
 		public override string Name { get { return "RSI"; } }
 		public override string Message {
 			get {
@@ -61,7 +61,7 @@ namespace CryptoWatcher.Alert
 		public override MetroPanel GetFilledUI()
 		{
 			MetroPanel panel = GetUI();
-			((MetroComboBox)(panel.Controls["cBoxType"])).SelectedItem = _types[_type];
+			((MetroComboBox)(panel.Controls["cBoxType"])).SelectedItem = Types[_type];
 			panel.Controls["txtValue"].Text = _absoluteAlert.Trigger.ToString();
 			panel.Controls["txtLength"].Text = _length.ToString();
 			((MetroComboBox)panel.Controls["cBoxSource"]).SelectedItem = SourceToString(_source);
@@ -73,7 +73,7 @@ namespace CryptoWatcher.Alert
 		{
 			_absoluteAlert = new AbsoluteAlert();
 			// custom alert
-			if (panel.Controls["cBoxType"].Text == _types[2])
+			if (panel.Controls["cBoxType"].Text == Types[2])
 			{
 				if (!float.TryParse(panel.Controls["txtValue"].Text.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out _absoluteAlert.Trigger))
 				{
@@ -99,13 +99,13 @@ namespace CryptoWatcher.Alert
 				_absoluteAlert.Type = AbsoluteAlert.StringToCondition(panel.Controls["cBoxCondition"].Text);
 				_source = StringToSource(panel.Controls["cBoxSource"].Text);
 			}
-			else if (panel.Controls["cBoxType"].Text == _types[0]) // overbought
+			else if (panel.Controls["cBoxType"].Text == Types[0]) // overbought
 			{
 				_absoluteAlert.Trigger = 70;
 				_absoluteAlert.Type = TriggerType.higherOrEqual;
 				_type = 0;
 			}
-			else if (panel.Controls["cBoxType"].Text == _types[1]) // oversold
+			else if (panel.Controls["cBoxType"].Text == Types[1]) // oversold
 			{
 				_absoluteAlert.Trigger = 30;
 				_absoluteAlert.Type = TriggerType.lowerOrEqual;
@@ -134,7 +134,7 @@ namespace CryptoWatcher.Alert
 				Name = "cBoxType",
 				Size = new System.Drawing.Size(124, 29),
 			};
-			cBoxType.Items.AddRange(_types);
+			cBoxType.Items.AddRange(Types);
 			cBoxType.SelectedIndex = 0;
 			cBoxType.SelectedIndexChanged += CBoxType_SelectedIndexChanged;
 
@@ -207,7 +207,7 @@ namespace CryptoWatcher.Alert
 
 		protected override string[] AlertDisplay {
 			get {
-				return new string[] { _types[_type], _absoluteAlert.Current.ToString()};
+				return new string[] { Types[_type], _absoluteAlert.Current.ToString()};
 			}
 		}
 

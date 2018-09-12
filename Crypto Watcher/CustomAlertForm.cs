@@ -98,6 +98,8 @@ namespace CryptoWatcher
 			AutoCompleteStringCollection acsc = new AutoCompleteStringCollection();
 			// populating autocomplete list in symbol textbox
 			await _coinList;
+			if (_coinList.Result == null)
+				return;
             foreach (var coin in _coinList.Result)
                 acsc.Add(coin.Symbol + " " + coin.CoinName);
             txtSymbol.AutoCompleteCustomSource = acsc;
@@ -126,6 +128,7 @@ namespace CryptoWatcher
 				lblError.Text = "";
 				if (_editedAlertId == -1)
 					ActiveControl = txtSymbol;
+				_editedAlertId = -1;
 			}
 		}
 
@@ -164,12 +167,15 @@ namespace CryptoWatcher
 				_baseSymbol = txtSymbol.Text.Substring(0, txtSymbol.Text.IndexOf(" "));
 				_baseName = txtSymbol.Text.Substring(txtSymbol.Text.IndexOf(" ") + 1);
 				await _coinList;
-				foreach (var coin in _coinList.Result)
+				if (_coinList.Result != null)
 				{
-					if (coin.CoinName == _baseName && coin.Symbol == _baseSymbol)
+					foreach (var coin in _coinList.Result)
 					{
-						coinFound = true;
-						break;
+						if (coin.CoinName == _baseName && coin.Symbol == _baseSymbol)
+						{
+							coinFound = true;
+							break;
+						}
 					}
 				}
 			}
@@ -182,6 +188,8 @@ namespace CryptoWatcher
 			{
 				_exchangesAndQuotes = ((await (AbstractAPI.CryptoCompareAPI).GetQuotesAndExchanges(_baseSymbol)));
 				cboxMarket.Items.Clear();
+				if (_exchangesAndQuotes == null)
+					return;
 				cboxMarket.Items.AddRange(_exchangesAndQuotes.Keys.OrderBy(x => x).ToArray());
 				cboxMarket.SelectedIndex = 0;
 				PopulateExchanges();

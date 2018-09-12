@@ -32,18 +32,14 @@ using System.Threading.Tasks;
 using CryptoWatcher.Utilities;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using System.Globalization;
 
-// for hour 
-//{"Message":"Total Rate limit hour stats","CallsMade":{"Histo":0,"Price":0,"News":0},"CallsLeft":{"Histo":8000,"Price":150000,"News":3000}}
-// for second
-//{"Message":"Total Rate limit second stats","CallsMade":{"Histo":0,"Price":0,"News":0},"CallsLeft":{"Histo":15,"Price":50,"News":5}}
-// for debuging websocked subs: https://streamer.cryptocompare.com/status
+// for debuging websocket subs: https://streamer.cryptocompare.com/status
 
 
 // TODO: add max limit of alerts only if you are using get function not websocket
 // TODO: consider putting max length when user is creating alert (max converted length = 2000)
 // TODO: Subscription isn't removing from websocket, couldn't find solution, try reconnecting every time someone unsubscribes
-// TODO: add rate limits for minute
 // TODO: use database for storing alerts, problem is how to dynamically change columns, use different table for each alert type?
 //
 
@@ -54,94 +50,67 @@ namespace CryptoWatcher.APIs
 	public class CryptoCompareAPI : AbstractAPI
 	{
 		public const string NAME = "CryptoCompare";
-		
+
 		private const string _STREAMERURL = "wss://streamer.cryptocompare.com";
 		private const string _MAIN_URL = "https://www.cryptocompare.com/";
 		private const string _MIN_URL = "https://min-api.cryptocompare.com/";
-		private static readonly object _clsDoor = new object();
-		private static readonly object _clhDoor = new object();
+
 		private static readonly object _subsDoor = new object();
-		// TODO: streamer unpacking: https://github.com/cryptoqween/cryptoqween.github.io/blob/master/streamer/ccc-streamer-utilities.js#L353
-		private static readonly string[] _maskPrice = { "f01", "38f01", "20f89", "8f01", "fe9", "10f01", "30f01", "f89", "f81", "20f01", "fc1", "18f01", "28f01", "40fc0", "40fc9", "10fc1", "38c01", "18fe9", "60fe1", "22fc9", "2f01", "1af01", "3af01", "30fc9", "cc9", "28f81", "30f89", "8f89", "38fc1", "20fc1", "10f89", "2f89", "2afc9", "68fc9", "38f89", "cc1", "28f89", "10fc9", "50fc9", "78fc9", "18fc9", "8fc9", "38f81", "20fc9", "18f81", "10f81", "18f89" };
-		private static readonly string[] _maskPriceAmount = { "fe01", "40fe1", "58fe1", "fe1", "8fe1", "38fe1", "10fe1", "78fe1", "50fe1", "70fe1", "28fe1", "60fe1", "48fe1", "52fe1", "2fe1", "5afe1", "68fe1", "30fe1", "18fe1", "20fe1", "ce1", "7afe1", "afe1" };
-		// timestamp is between price and amount
-		private static readonly string[] _maskPriceTimestampAmount = { "7ffe9", "fc9", "10fe9", "fe9", "40fe9", "8fe9", "20fe9", "70fe9", "50fe9", "60fe9", "30fe9", "58fe9", "38fe9", "78fe9", "28fe9", "68fe9", "48fe9", "44fe9", "4fe9", "18fe9", "12fe9", "3afe9", "7afe9", "52fe9", "2fe9", "1afe9", "38ce9", "ce9", "2afe9", "8ce9", "8ce8" };	
-		// no price but timestamp and amount
-		private static readonly string[] _maskTimestampAmount = { "fe8", "40fe8", "8fe8", "20fe8", "10fe8", "50fe8", "28fe8", "60fe8", "38fe8", "30fe8", "48fe8", "70fe8", "18fe8", "78fe8", "58fe8", "ce8", "42fe8", "2fe8" };
-		// not useful //NOTE: there are some strings where price is close to the end of a string
-		private static readonly string[] _maskNotUseful = { "f00", "f88", "20f00", "f80", "10f00", "c00", "fc8", "8f00", "8f88", "fc0", "30f00", "10f88", "2f00", "68fe8", "8c00", "c88", "20f88", "38f00", "28f00", "c80", "18f88", "40fc8", "28f80", "20f80", "48fc8", "18f00", "10f80", "28f88" };
-		// amount
-		private static readonly string[] _maskAmount = { "fe0", "40fe0", "68fe0", "60fe0", "10fe0", "38fe0", "20fe0", "8fe0", "50fe0", "70fe0", "ce0", "48fe0", "30fe0" };
-		private static RateLimit _callsLeftHour = new RateLimit(8000, 150000, 3000);
-		private static RateLimit _callsLeftSecond = new RateLimit(15, 50, 5);
-		private static RateLimit _rateLimitHour = new RateLimit(8000, 150000, 3000);
-		private static RateLimit _rateLimitSecond = new RateLimit(15, 50, 5);
+		private static readonly Dictionary<string, int> _STREAMER_FIELDS = new Dictionary<string, int>() {
+			{ "TYPE", 0x0 }, //  hex for binary 0, it is a special case of fields that are always there
+			{ "MARKET", 0x0 }, //  hex for binary 0, it is a special case of fields that are always there
+			{ "FROMSYMBOL", 0x0 }, //  hex for binary 0, it is a special case of fields that are always there
+			{ "TOSYMBOL", 0x0 }, //  hex for binary 0, it is a special case of fields that are always there
+			{ "FLAGS", 0x0 }, //  hex for binary 0, it is a special case of fields that are always there
+			{ "PRICE", 0x1 }, //  hex for binary 1
+			{ "BID", 0x2 }, //  hex for binary 10
+			{ "OFFER", 0x4 }, //  hex for binary 100
+			{ "LASTUPDATE", 0x8 }, //  hex for binary 1000
+			{ "AVG", 0x10 }, //  hex for binary 10000
+			{ "LASTVOLUME", 0x20 }, // hex for binary 100000
+			{ "LASTVOLUMETO", 0x40 }, //  hex for binary 1000000
+			{ "LASTTRADEID", 0x80 }, //  hex for binary 10000000
+			{ "VOLUMEHOUR", 0x100 }, //  hex for binary 100000000
+			{ "VOLUMEHOURTO", 0x200 }, //  hex for binary 1000000000
+			{ "VOLUME24HOUR", 0x400 }, //  hex for binary 10000000000
+			{ "VOLUME24HOURTO", 0x800 }, //  hex for binary 100000000000
+			{ "OPENHOUR", 0x1000 }, //  hex for binary 1000000000000
+			{ "HIGHHOUR", 0x2000 }, //  hex for binary 10000000000000
+			{ "LOWHOUR", 0x4000 }, //  hex for binary 100000000000000
+			{ "OPEN24HOUR", 0x8000 }, //  hex for binary 1000000000000000
+			{ "HIGH24HOUR", 0x10000 }, //  hex for binary 10000000000000000
+			{ "LOW24HOUR", 0x20000 }, //  hex for binary 100000000000000000
+			{ "LASTMARKET", 0x40000 } //  hex for binary 1000000000000000000, this is a special case and will only appear on CCCAGG messages
+		};
+
+		private static Dictionary<int, Dictionary<RateLimitType, int>> _rateLimits = new Dictionary<int, Dictionary<RateLimitType, int>>();
+		private static DateTime _limitLastUpdate;
+
 		private Socket _socket = IO.Socket("wss://streamer.cryptocompare.com");
-		private System.Windows.Forms.Timer _timerSecond = new System.Windows.Forms.Timer();
-		private System.Windows.Forms.Timer _timerHour = new System.Windows.Forms.Timer();
-		private System.Windows.Forms.Timer _startingTimer = new System.Windows.Forms.Timer();
-		private DateTime _nextUpdateSecond;
-		private DateTime _nextUpdateHour;
 		private Dictionary<string, Data> _subs = new Dictionary<string, Data>();
 
 		public CryptoCompareAPI()
 		{
-			
+			//UpdateRateLimitsAsync();
 			Console.WriteLine("Establishing connection...");
 			_socket.Connect();
-			//_socket.Open();
 			_socket.On("m", data => OnMessage(data));
 			_socket.On(Socket.EVENT_CONNECT, () =>
 			{
 				Debug.WriteLine("Socket connected.");
 			});
-			UpdateLimitsAsync();
-			DateTime currentTime = DateTime.Now;
-			_nextUpdateHour = currentTime + new TimeSpan(1, 0, 0);
-			_nextUpdateSecond = currentTime + new TimeSpan(0, 0, 1);
-			_startingTimer.Interval = 1;
-			_startingTimer.Tick += StartingTimer_Tick;
-			_startingTimer.Enabled = true;
 		}
 
-		protected enum RateLimitType { Price, History, News }
-		// VolumeFrom = BTC, VolumeTo = USD
-		/// <summary>
-		/// Constants to find data on specific place of a message.
-		/// </summary>
-		private enum MsgType
-		{
-			/// <summary>
-			/// Price is in first section.
-			/// </summary>
-			Price,
-			/// <summary>
-			/// {Price}~{VolumeFrom}~{VolumeTo}...
-			/// </summary>
-			PriceAmount,
-			/// <summary>
-			/// {Price}~{Timestamp}~{VolumeFrom}~{VolumeTo}...
-			/// </summary>
-			PriceTimestampAmount,
-			/// <summary>
-			/// {Timestamp}~{VolumeFrom}~{VolumeTo}...
-			/// </summary>
-			TimestampAmount,
-			/// <summary>
-			/// {VolumeFrom}~{VolumeTo}...
-			/// </summary>
-			Amount,
-			/// <summary>
-			/// Other info that I don't need, like marketcap, 24h volumes.
-			/// </summary>
-			NotUseful
-		}
+		protected enum RateLimitType { Price, History, News, Strict, NONE }
 
-		public async Task<Dictionary<string,List<string>>> GetQuotesAndExchanges(string symbol)
+		public async Task<Dictionary<string, List<string>>> GetQuotesAndExchanges(string symbol)
 		{
 			Dictionary<string, SubByPair> pairSubs = await GetSubsByPair(symbol);
 			Dictionary<string, List<string>> output = new Dictionary<string, List<string>>();
-			
+
+			if (pairSubs == null)
+				return null;
+
 			foreach (var quote in pairSubs.Keys)
 			{
 				List<string> exchanges = new List<string>();
@@ -225,10 +194,12 @@ namespace CryptoWatcher.APIs
 					downloadCandles = true;
 			}
 			if (downloadCandles)
-				candlesticks = (await GetCandlesticks(baseSymbol, quoteSymbol, timeframe, maxLength, exchange)).ToList();
+				candlesticks = (await GetCandlesticks(baseSymbol, quoteSymbol, timeframe, maxLength, exchange));
 			// there are less candles than required
-			if (downloadCandles && candlesticks.Count < minLength)
+			
+			if (candlesticks == null && downloadCandles || downloadCandles && candlesticks.Count < minLength)
 				return false;
+
 			lock (_subsDoor)
 			{
 				// We don't have key in dictionary.
@@ -255,7 +226,7 @@ namespace CryptoWatcher.APIs
 				}
 				_subs[key].Subs++;
 			}
-			if(autocall)
+			if (autocall)
 				action(new PriceUpdate() { Candlesticks = _subs[key].Candles[timeframe] });
 			return true;
 		}
@@ -325,7 +296,7 @@ namespace CryptoWatcher.APIs
 			_socket.Disconnect();
 			Task.Delay(2000);
 			_socket.Connect();
-			Task.Delay(100);
+			Task.Delay(1000);
 			foreach (var key in _subs.Keys)
 			{
 				string exchange = Utility.GetSubstring(key, '~', 0);
@@ -335,137 +306,54 @@ namespace CryptoWatcher.APIs
 			}
 		}
 
-		private MsgType GetMsgType(string msg)
+		public DateTime GetNextTime(int seconds)
 		{
-			string type = msg.Substring(msg.LastIndexOf('~') + 1);
-
-			if (_maskPriceTimestampAmount.Contains(type)) return MsgType.PriceTimestampAmount;
-			if (_maskTimestampAmount.Contains(type)) return MsgType.TimestampAmount;
-			if (_maskPriceAmount.Contains(type)) return MsgType.PriceAmount;
-			if (_maskNotUseful.Contains(type)) return MsgType.NotUseful;
-			if (_maskAmount.Contains(type)) return MsgType.Amount;
-			if (_maskPrice.Contains(type)) return MsgType.Price;
-
-			if (!File.Exists("Saves/socketlog.txt"))
-				File.Create("Saves/socketlog.txt");
-
-			using (StreamWriter w = File.AppendText("Saves/socketlog.txt"))
-			{
-				w.WriteLine(msg);
-				Console.WriteLine(msg);
-				w.Close();
-			}
-
-			return MsgType.NotUseful;
-		}
-
-		private float GetPrice(string msg, MsgType msgType)
-		{
-			msg = Utility.GetSubstring(msg, '~', 5, false);
-			float volumeFrom, volumeTo;
-			switch (msgType)
-			{
-				case MsgType.Price: return float.Parse(Utility.GetSubstring(msg, '~', 0));
-				case MsgType.PriceAmount: return float.Parse(Utility.GetSubstring(msg, '~', 0));
-				case MsgType.PriceTimestampAmount: return float.Parse(Utility.GetSubstring(msg, '~', 0));
-				case MsgType.TimestampAmount:
-					volumeFrom = float.Parse(Utility.GetSubstring(msg, '~', 1));
-					volumeTo = float.Parse(Utility.GetSubstring(msg, '~', 2));
-					return volumeTo / volumeFrom;
-				case MsgType.Amount:
-					volumeFrom = float.Parse(Utility.GetSubstring(msg, '~', 0));
-					volumeTo = float.Parse(Utility.GetSubstring(msg, '~', 1));
-					return volumeTo / volumeFrom;
-				default:
-					return 0;
-			}
+			seconds *= 1000 * 1000 * 10;
+			long currentTime = DateTime.Now.Ticks;
+			return new DateTime(seconds - currentTime % seconds + currentTime);
 		}
 
 		// puts thread to sleep if limit is exceeded and revives it when limit renews
 		private async Task Limit(RateLimitType type)
 		{
-			await Task.Factory.StartNew(() =>
+			if (type == RateLimitType.NONE)
+				return;
+
+			// Updating rate limits if more than 1 second have passed
+			if(DateTime.Now - _limitLastUpdate >= new TimeSpan(0, 0, 1))
+				await UpdateRateLimitsAsync();
+
+			// Waiting for time to pass if we exceeded limit
+			foreach (var limitTime in _rateLimits.Keys)
 			{
-				if (RateLimitType.Price == type)
+				if(_rateLimits[limitTime][type] <= 0)
 				{
-					lock (_clsDoor)
-					{
-						if (_callsLeftSecond.Price == 0)
-							Thread.Sleep(_nextUpdateSecond - DateTime.Now);
-						_callsLeftSecond.Price--;
-					}
-					lock (_clhDoor)
-					{
-						if (_callsLeftHour.Price == 0)
-							Thread.Sleep(_nextUpdateHour - DateTime.Now);
-						_callsLeftHour.Price--;
-					}
+					Debug.WriteLine($"Limiting for {GetNextTime(limitTime) - DateTime.Now}");
+					await Task.Delay(GetNextTime(limitTime) - DateTime.Now);
 				}
-				else if (RateLimitType.History == type)
-				{
-					lock (_clsDoor)
-					{
-						if (_callsLeftSecond.Histo == 0)
-							Thread.Sleep(_nextUpdateSecond - DateTime.Now);
-						_callsLeftSecond.Histo--;
-					}
-					lock (_clhDoor)
-					{
-						if (_callsLeftHour.Histo == 0)
-							Thread.Sleep(_nextUpdateHour - DateTime.Now);
-						_callsLeftHour.Histo--;
-					}
-				}
-				else
-				{
-					lock (_clsDoor)
-					{
-						if (_callsLeftSecond.News == 0)
-							Thread.Sleep(_nextUpdateSecond - DateTime.Now);
-						_callsLeftSecond.News--;
-					}
-					lock (_clhDoor)
-					{
-						if (_callsLeftHour.News == 0)
-							Thread.Sleep(_nextUpdateHour - DateTime.Now);
-						_callsLeftHour.News--;
-					}
-				}
-			});
+				_rateLimits[limitTime][type]--;
+			}
 		}
 
-		private Trade GetTrade(string msg, MsgType msgType)
+		private Dictionary<string, string> UnpackMessage(string message)
 		{
-			msg = Utility.GetSubstring(msg, '~', 5, false);
-			Trade trade = new Trade();
-			switch (msgType)
+			List<string> strings = Utility.SplitString(message, '~');
+			int maskInt = int.Parse(strings.Last(), System.Globalization.NumberStyles.HexNumber);
+			Dictionary<string, string> msg = new Dictionary<string, string>();
+			int i = 0;
+
+			foreach (var property in _STREAMER_FIELDS.Keys)
 			{
-				case MsgType.PriceAmount:
-					trade.Price = float.Parse(Utility.GetSubstring(msg, '~', 0));
-					trade.VolumeFrom = float.Parse(Utility.GetSubstring(msg, '~', 1));
-					trade.VolumeTo = float.Parse(Utility.GetSubstring(msg, '~', 2));
-					break;
-				case MsgType.PriceTimestampAmount:
-					trade.Price = float.Parse(Utility.GetSubstring(msg, '~', 0));
-					trade.VolumeFrom = float.Parse(Utility.GetSubstring(msg, '~', 2));
-					trade.VolumeTo = float.Parse(Utility.GetSubstring(msg, '~', 3));
-					break;
-				case MsgType.TimestampAmount:
-					trade.VolumeFrom = float.Parse(Utility.GetSubstring(msg, '~', 1));
-					trade.VolumeTo = float.Parse(Utility.GetSubstring(msg, '~', 2));
-					trade.Price = trade.VolumeTo / trade.VolumeFrom;
-					break;
-				case MsgType.Amount:
-					trade.VolumeFrom = float.Parse(Utility.GetSubstring(msg, '~', 0));
-					trade.VolumeTo = float.Parse(Utility.GetSubstring(msg, '~', 1));
-					trade.Price = trade.VolumeTo / trade.VolumeFrom;
-					break;
-				default:
-					trade.Price = 0;
-					break;
+				if(_STREAMER_FIELDS[property] == 0 || (maskInt & _STREAMER_FIELDS[property]) != 0)
+				{
+					msg[property] = strings[i];
+					i++;
+				}
 			}
-			return trade;
+
+			return msg;
 		}
+
 		// TODO: i think you can reduce number of updates because price hasn't changed but there was trade (use only message types that contains price)
 		// gets called when websocket recieves message on other thread
 		private void OnMessage(object message)
@@ -482,27 +370,31 @@ namespace CryptoWatcher.APIs
 				Debug.Unindent();
 				return;
 			}
-			
-			Console.WriteLine("Thread: " + Thread.CurrentThread.ManagedThreadId + ": " + (string)message);
-			MsgType msgType = GetMsgType((string)message);
-			string exchange = Utility.GetSubstring((string)message, '~', 1);
-			string baseSymbol = Utility.GetSubstring((string)message, '~', 2);
-			string quoteSymbol = Utility.GetSubstring((string)message, '~', 3);
 
-			float price = GetPrice((string)message, msgType);
-			if (msgType != MsgType.NotUseful)
+			Console.WriteLine("Thread: " + Thread.CurrentThread.ManagedThreadId + ": " + (string)message);
+			Dictionary<string, string> msg = UnpackMessage((string)message);
+
+			string exchange = msg["MARKET"];
+			string baseSymbol = msg["FROMSYMBOL"];
+			string quoteSymbol = msg["TOSYMBOL"];
+			float price = -1;
+			if (msg.ContainsKey("BID") || msg.ContainsKey("OFFER") || msg.ContainsKey("AVG") || msg.ContainsKey("VOLUMEHOURFROM") || msg.ContainsKey("VOLUMEHOURTO"))
+				Debug.WriteLine("str");
+			if (msg.ContainsKey("PRICE"))
 			{
+				price = float.Parse(msg["PRICE"].Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture);
 				if (priceSubscription.ContainsKey($"{exchange};{baseSymbol};{quoteSymbol}"))
 					priceSubscription.OnEventForKey($"{exchange};{baseSymbol};{quoteSymbol}", new PriceUpdate() { Price = price });
 			}
-
-			Trade trade = GetTrade((string)message, msgType);
-			if (msgType != MsgType.NotUseful && msgType != MsgType.Price)//38ce9
-				ManageCandles(baseSymbol, quoteSymbol, exchange, trade);
+			if (msg.ContainsKey("LASTVOLUME"))
+			{
+				float lastVolume = float.Parse(msg["LASTVOLUME"].Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture);
+				ManageCandles(baseSymbol, quoteSymbol, exchange, price, lastVolume);
+			}
 		}
 
 		// creates candles from websocket update messages
-		private void ManageCandles(string baseSymbol, string quoteSymbol, string exchange, Trade trade)
+		private void ManageCandles(string baseSymbol, string quoteSymbol, string exchange, float price, float volumeFrom)
 		{
 			// gets keys for specific base and quote symbol
 			string key = $"{exchange};{baseSymbol};{quoteSymbol}";
@@ -518,21 +410,24 @@ namespace CryptoWatcher.APIs
 				{
 					if (k == Timeframe.NONE)
 						continue;
-					int range = _subs[key].Candles[k][1].openTime - _subs[key].Candles[k][0].openTime;
-					if (_subs[key].Candles[k].Last().openTime + range <= unixTimestamp)
+					long range = _subs[key].Candles[k][1].Timestamp - _subs[key].Candles[k][0].Timestamp;
+					if (price == -1)
+						price = _subs[key].Candles[k].Last().close;
+					if (_subs[key].Candles[k].Last().Timestamp + range <= unixTimestamp)
 					{
-						_subs[key].Candles[k].Add(new Candlestick(_subs[key].Candles[k].Last().openTime + range, trade.Price, trade.Price, trade.Price, trade.Price, trade.VolumeTo));
+						_subs[key].Candles[k].Add(new Candlestick(_subs[key].Candles[k].Last().Timestamp + range, price, price, price, price, volumeFrom));
 						_subs[key].Candles[k].RemoveAt(0);
 					}
 					else
 					{
-						if (_subs[key].Candles[k].Last().high < trade.Price)
-							_subs[key].Candles[k].Last().high = trade.Price;
-						if (_subs[key].Candles[k].Last().low < trade.Price)
-							_subs[key].Candles[k].Last().low = trade.Price;
-						_subs[key].Candles[k].Last().close = trade.Price;
-						_subs[key].Candles[k].Last().volume += trade.VolumeTo;
+						if (_subs[key].Candles[k].Last().high < price)
+							_subs[key].Candles[k].Last().high = price;
+						if (_subs[key].Candles[k].Last().low < price)
+							_subs[key].Candles[k].Last().low = price;
+						_subs[key].Candles[k].Last().close = price;
+						_subs[key].Candles[k].Last().volume += volumeFrom;
 					}
+					//Debug.WriteLine($"Volume: {_subs[key].Candles[k].Last().volume}");
 					candleSubscription.OnEventForKey($"{exchange};{baseSymbol};{quoteSymbol};{(Timeframe)range}", new PriceUpdate() { Candlesticks = _subs[key].Candles[k] });
 				}
 				Debug.WriteLine($"Managing candles: END, thread: {Thread.CurrentThread.ManagedThreadId}");
@@ -554,9 +449,11 @@ namespace CryptoWatcher.APIs
 			}
 			if (exchange != "CCCAGG")
 				endpoint += "&e=" + exchange;
-			await Limit(RateLimitType.Price);
 			Dictionary<string, Dictionary<string, float>> ret = new Dictionary<string, Dictionary<string, float>>();
-			JObject jObject = await GetJObject(endpoint);
+			string response = await Handle(endpoint, RateLimitType.Price);
+			if (response == null)
+				return null;
+			JObject jObject = JObject.Parse(response);
 			for (int j = 0; j < fsyms.Count; j++)
 			{
 				Dictionary<string, float> _prices = new Dictionary<string, float>();
@@ -571,10 +468,8 @@ namespace CryptoWatcher.APIs
 		}
 
 		// TODO: candlestick time is open time
-		private async Task<Candlestick[]> GetCandlesticks(string baseSymbol, string quoteSymbol, Timeframe timeframe, int limit, string exchange = "CCCAGG")
+		public async Task<List<Candlestick>> GetCandlesticks(string baseSymbol, string quoteSymbol, Timeframe timeframe, int limit, string exchange = "CCCAGG")
 		{
-			Stopwatch s = new Stopwatch();
-			s.Start();
 			if (limit > 2000)
 				throw new ArgumentException();
 			string endpoint = _MIN_URL + "data/";
@@ -604,26 +499,57 @@ namespace CryptoWatcher.APIs
 			if (exchange != "CCCAGG")
 				endpoint += $"&e={exchange}";
 
-			await Limit(RateLimitType.History);
-			var candlesticks = DeserializeToArray<Candlestick>((await GetJObject(endpoint))["Data"]);
-			// if limit is higher than the number of candles, server returns empty candles to fill array
-			if(candlesticks[0].close == 0)
+			//await Limit(RateLimitType.History);
+			string response = await Handle(endpoint, RateLimitType.History);
+			if (response == null)
+				return null;
+			var candlesticks = DeserializeToArray<Candlestick>(JObject.Parse(response)["Data"]);
+
+			// removing placeholder candles
+			if (candlesticks[0].close == 0)
 			{
 				int i = 1;
 				while (candlesticks[i].close == 0) { i++; }
 				Candlestick[] output = new Candlestick[candlesticks.Length - i];
 				Array.Copy(candlesticks, i, output, 0, candlesticks.Length - i);
-				return output;
+				return output.ToList();
 			}
-			s.Stop();
-			Debug.WriteLine($"Get candlesticks, length: {candlesticks.Length}, time: {s.ElapsedMilliseconds} ms");
-			return candlesticks;
+			return candlesticks.ToList();
+		}
+
+		/// <summary>
+		/// Handles errors and rate limiting.
+		/// </summary>
+		/// <param name="url"></param>
+		/// <param name="rateLimitType"></param>
+		/// <returns>Returns response from server if OK else null.</returns>
+		private async Task<string> Handle(string url, RateLimitType rateLimitType)
+		{
+			await Limit(rateLimitType);
+			string response = await GetResponseString(url);
+			JObject jObject = JObject.Parse(response);
+			if (response.Contains("\"Response\":\"Error\","))
+			{
+				int type = jObject["Type"].ToObject<int>();
+				string msg = jObject["Message"].ToObject<string>();
+				// Rate limit exceeded
+				if(type == 99)
+				{
+					Debug.WriteLine($"Rate limit exceeded: {DateTime.Now}");
+					return await Handle(url, rateLimitType);
+				}else
+				{
+					System.Windows.Forms.MessageBox.Show(msg);
+					return null;
+				}
+			}
+			return response;
 		}
 
 		private async Task<Dictionary<string, SubByPair>> GetSubsByPair(string baseSymbol, string[] quoteSymbols = null)
 		{
 			Dictionary<string, SubByPair> pairSubs = new Dictionary<string, SubByPair>();
-			string endpoint = $"https://min-api.cryptocompare.com/data/subs?fsym={baseSymbol}";
+			string endpoint = _MIN_URL + $"data/subs?fsym={baseSymbol}";
 			if (quoteSymbols != null)
 			{
 				endpoint += "&tsyms=";
@@ -634,11 +560,13 @@ namespace CryptoWatcher.APIs
 						endpoint += ',';
 				}
 			}
-			// TODO: add await lock with different ratelimit type "Strict"
-			JObject jObject = await GetJObject(endpoint);
+			string response = await Handle(endpoint, RateLimitType.Price);
+			if (response == null)
+				return null;
+			JObject jObject = JObject.Parse(response);
 			foreach (var quote in jObject)
 			{
-				if(quote.Key != "")
+				if (quote.Key != "")
 					pairSubs.Add(quote.Key, quote.Value.ToObject<SubByPair>());
 			}
 			return pairSubs;
@@ -686,47 +614,13 @@ namespace CryptoWatcher.APIs
 			return ret;
 		}
 
-		private void StartingTimer_Tick(object sender, EventArgs e)
-		{
-			if (_startingTimer.Interval == 1 && DateTime.Now.Millisecond == 0)
-			{
-				_timerSecond.Interval = 1000;
-				_timerSecond.Tick += TimerSecond_Tick;
-				_timerSecond.Enabled = true;
-				TimerSecond_Tick(null, null);
-				_startingTimer.Interval = 60000;
-			}
-			else if (_startingTimer.Interval == 60000 && DateTime.Now.Minute == 0)
-			{
-				_timerHour.Interval = 3600000;
-				_timerHour.Tick += TimerHour_Tick;
-				_timerHour.Enabled = true;
-				_startingTimer.Enabled = false;
-				TimerHour_Tick(null, null);
-			}
-		}
-
-		private void TimerHour_Tick(object sender, EventArgs e)
-		{
-			lock (_clhDoor)
-			{
-				_callsLeftHour = _rateLimitHour;
-				_nextUpdateHour = DateTime.Now + new TimeSpan(1, 0, 0);
-			}
-		}
-
-		private void TimerSecond_Tick(object sender, EventArgs e)
-		{
-			lock (_clsDoor)
-			{
-				_callsLeftSecond = _rateLimitSecond;
-				_nextUpdateSecond = DateTime.Now + new TimeSpan(0, 0, 1);
-			}
-		}
-
 		public async Task<List<Coin>> GetCoinList()
 		{
-			JToken jToken = (await GetJObject(_MIN_URL + "data/all/coinlist"))["Data"];
+			string response = await Handle(_MIN_URL + "data/all/coinlist", RateLimitType.Price);
+			if (response == null)
+				return null;
+
+			JToken jToken = (JObject.Parse(response))["Data"];
 			List<Coin> _coins = new List<Coin>();
 			foreach (var jt in jToken.Children())
 			{
@@ -738,6 +632,9 @@ namespace CryptoWatcher.APIs
 		private async Task<List<Sub>> GetSubs(string id)
 		{
 			string endpoint = _MAIN_URL + "api/data/coinsnapshotfullbyid/?id=" + id;
+			string response = await Handle(endpoint, RateLimitType.Price);
+			if (response == null)
+				return null;
 			JToken jToken = (await GetJObject(endpoint))["Data"]["Subs"];
 			List<Sub> subs = new List<Sub>();
 			foreach (var jt in jToken.Children())
@@ -747,20 +644,42 @@ namespace CryptoWatcher.APIs
 			return subs;
 		}
 
-		private async void UpdateLimitsAsync()
+		private async Task UpdateRateLimitsAsync()
 		{
-			_rateLimitSecond = await GetRateLimitsAsync(false);
-			_rateLimitHour = await GetRateLimitsAsync(true);
-		}
+			JObject jObject = await GetJObject(_MIN_URL + "stats/rate/limit");
 
-		private async Task<RateLimit> GetRateLimitsAsync(bool hourly)
-		{
-			string endpoint;
-			if (hourly)
-				endpoint = "stats/rate/hour/limit";
-			else endpoint = "stats/rate/second/limit";
-			JObject jObject = await GetJObject(_MIN_URL + endpoint);
-			return jObject["CallsLeft"].ToObject<RateLimit>();
+			_rateLimits.Clear();
+
+			// Populating rate limits dictionary with calls left from response
+			for (int i = 0; i < 3; i++)
+			{
+				int rateLimitTime = 1;
+				string JSONTimeKey = "Second";
+				Dictionary<RateLimitType, int> callsLeft = new Dictionary<RateLimitType, int>();
+
+				switch (i)
+				{
+					case 1: rateLimitTime = 60; JSONTimeKey = "Minute"; break;
+					case 2: rateLimitTime = 3600; JSONTimeKey = "Hour"; break;
+				}
+
+				foreach (var limitType in Enum.GetValues(typeof(RateLimitType)).Cast<RateLimitType>().ToArray())
+				{
+					if (limitType == RateLimitType.NONE)
+						continue;
+					string JSONTypeKey = "";
+					switch (limitType)
+					{
+						case RateLimitType.Price: JSONTypeKey = "Price"; break;
+						case RateLimitType.History: JSONTypeKey = "Histo"; break;
+						case RateLimitType.News: JSONTypeKey = "News"; break;
+						case RateLimitType.Strict: JSONTypeKey = "Strict"; break;
+					}
+					callsLeft.Add(limitType, jObject[JSONTimeKey]["CallsLeft"][JSONTypeKey].ToObject<int>());
+				}
+				_rateLimits.Add(rateLimitTime, callsLeft);
+			}
+			_limitLastUpdate = DateTime.Now;
 		}
 
 		public struct Coin
@@ -780,27 +699,6 @@ namespace CryptoWatcher.APIs
 			public string TotalCoinsFreeFloat { get; set; }
 			public string SortOrder { get; set; }
 			public bool Sponsored { get; set; }
-		}
-
-		private struct Trade
-		{
-			public float VolumeFrom { get; set; }
-			public float VolumeTo { get; set; }
-			public float Price { get; set; }
-		}
-
-		private struct RateLimit
-		{
-			public RateLimit(int histo, int price, int news)
-			{
-				Histo = histo;
-				Price = price;
-				News = news;
-			}
-
-			public int Histo { get; set; }
-			public int Price { get; set; }
-			public int News { get; set; }
 		}
 
 		private struct Sub
