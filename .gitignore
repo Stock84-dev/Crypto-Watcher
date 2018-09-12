@@ -1,9 +1,0 @@
-# Ignored folders
-.vs/*
-packages/*
-# excludes all folders with that name everywhere
-/**/bin/
-/**/obj/
-
-# Ignored files
-*pdb
