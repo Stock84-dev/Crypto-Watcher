@@ -199,12 +199,6 @@ namespace CryptoWatcher.APIs
 			
 			if (candlesticks == null && downloadCandles || downloadCandles && candlesticks.Count < minLength)
 				return false;
-			StreamWriter sw = new StreamWriter("c.txt");
-			foreach (var c in candlesticks)
-			{
-				sw.WriteLine(c.volume);
-			}
-			sw.Close();
 
 			lock (_subsDoor)
 			{
@@ -416,12 +410,12 @@ namespace CryptoWatcher.APIs
 				{
 					if (k == Timeframe.NONE)
 						continue;
-					int range = _subs[key].Candles[k][1].openTime - _subs[key].Candles[k][0].openTime;
+					long range = _subs[key].Candles[k][1].Timestamp - _subs[key].Candles[k][0].Timestamp;
 					if (price == -1)
 						price = _subs[key].Candles[k].Last().close;
-					if (_subs[key].Candles[k].Last().openTime + range <= unixTimestamp)
+					if (_subs[key].Candles[k].Last().Timestamp + range <= unixTimestamp)
 					{
-						_subs[key].Candles[k].Add(new Candlestick(_subs[key].Candles[k].Last().openTime + range, price, price, price, price, volumeFrom));
+						_subs[key].Candles[k].Add(new Candlestick(_subs[key].Candles[k].Last().Timestamp + range, price, price, price, price, volumeFrom));
 						_subs[key].Candles[k].RemoveAt(0);
 					}
 					else
@@ -433,7 +427,7 @@ namespace CryptoWatcher.APIs
 						_subs[key].Candles[k].Last().close = price;
 						_subs[key].Candles[k].Last().volume += volumeFrom;
 					}
-					Debug.WriteLine($"Volume: {_subs[key].Candles[k].Last().volume}");
+					//Debug.WriteLine($"Volume: {_subs[key].Candles[k].Last().volume}");
 					candleSubscription.OnEventForKey($"{exchange};{baseSymbol};{quoteSymbol};{(Timeframe)range}", new PriceUpdate() { Candlesticks = _subs[key].Candles[k] });
 				}
 				Debug.WriteLine($"Managing candles: END, thread: {Thread.CurrentThread.ManagedThreadId}");

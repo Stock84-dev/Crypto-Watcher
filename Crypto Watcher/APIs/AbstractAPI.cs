@@ -33,6 +33,8 @@ using Newtonsoft.Json;
 
 namespace CryptoWatcher.APIs
 {
+	public enum Timeframe { NONE, min1 = 60, min3 = 180, min5 = 300, min15 = 900, min30 = 1800, h1 = 3600, h2 = 7200, h4 = 14400, h6 = 21600, h8 = 28800, h12 = 43200, d1 = 86400, d3 = 259200, w1 = 604800, M1 = 2419200 }
+
 	public abstract class AbstractAPI
 	{
 		private static CryptoCompareAPI _CCCAG = new CryptoCompareAPI();
@@ -41,76 +43,6 @@ namespace CryptoWatcher.APIs
 
 		protected static MyEvent<PriceUpdate> priceSubscription = new MyEvent<PriceUpdate>();
 		protected static MyEvent<PriceUpdate> candleSubscription = new MyEvent<PriceUpdate>();
-
-		public static Timeframe StringToTimeframe(string timeframe)
-		{
-			switch (timeframe)
-			{
-				case "NONE":
-					return Timeframe.NONE;
-				case "1 minute":
-					return Timeframe.min1;
-				case "3 minutes":
-					return Timeframe.min3;
-				case "5 minutes":
-					return Timeframe.min5;
-				case "15 minutes":
-					return Timeframe.min15;
-				case "30 minutes":
-					return Timeframe.min30;
-				case "1 hour":
-					return Timeframe.h1;
-				case "2 hours":
-					return Timeframe.h2;
-				case "4 hours":
-					return Timeframe.h4;
-				case "6 hours":
-					return Timeframe.h6;
-				case "12 hours":
-					return Timeframe.h12;
-				case "1 day":
-					return Timeframe.d1;
-				case "3 days":
-					return Timeframe.d3;
-				case "1 week":
-					return Timeframe.w1;
-			}
-			throw new ArgumentException();
-		}
-
-		public static string[] GetTimeframes()
-		{
-			var values = Enum.GetValues(typeof(Timeframe)).Cast<Timeframe>().ToArray();
-			string[] types = new string[values.Count() - 1];
-
-			for (int i = 1; i <= types.Length; i++)
-			{
-				types[i - 1] = TimeframeToString(values[i]);
-			}
-			return types;
-		}
-
-		public static string TimeframeToString(Timeframe timeframe)
-		{
-			switch (timeframe)
-			{
-				case Timeframe.NONE: return "NONE";
-				case Timeframe.min1: return "1 minute";
-				case Timeframe.min3: return "3 minutes";
-				case Timeframe.min5: return "5 minutes";
-				case Timeframe.min15: return "15 minutes";
-				case Timeframe.min30: return "30 minutes";
-				case Timeframe.h1: return "1 hour";
-				case Timeframe.h2: return "2 hours";
-				case Timeframe.h4: return "4 hours";
-				case Timeframe.h6: return "6 hours";
-				case Timeframe.h12: return "12 hours";
-				case Timeframe.d1: return "1 day";
-				case Timeframe.d3: return "3 days";
-				case Timeframe.w1: return "1 week";
-			}
-			throw new ArgumentException();
-		}
 
 		//public abstract List<QuoteSymbol> GetQuoteSymbols(string name, string symbol);
 
@@ -202,6 +134,76 @@ namespace CryptoWatcher.APIs
 			throw new Exception("Couldn't get response from server.");
 		}
 
+		public static Timeframe StringToTimeframe(string timeframe)
+		{
+			switch (timeframe)
+			{
+				case "NONE":
+					return Timeframe.NONE;
+				case "1 minute":
+					return Timeframe.min1;
+				case "3 minutes":
+					return Timeframe.min3;
+				case "5 minutes":
+					return Timeframe.min5;
+				case "15 minutes":
+					return Timeframe.min15;
+				case "30 minutes":
+					return Timeframe.min30;
+				case "1 hour":
+					return Timeframe.h1;
+				case "2 hours":
+					return Timeframe.h2;
+				case "4 hours":
+					return Timeframe.h4;
+				case "6 hours":
+					return Timeframe.h6;
+				case "12 hours":
+					return Timeframe.h12;
+				case "1 day":
+					return Timeframe.d1;
+				case "3 days":
+					return Timeframe.d3;
+				case "1 week":
+					return Timeframe.w1;
+			}
+			throw new ArgumentException();
+		}
+
+		public static string[] GetTimeframes()
+		{
+			var values = Enum.GetValues(typeof(Timeframe)).Cast<Timeframe>().ToArray();
+			string[] types = new string[values.Count() - 1];
+
+			for (int i = 1; i <= types.Length; i++)
+			{
+				types[i - 1] = TimeframeToString(values[i]);
+			}
+			return types;
+		}
+
+		public static string TimeframeToString(Timeframe timeframe)
+		{
+			switch (timeframe)
+			{
+				case Timeframe.NONE: return "NONE";
+				case Timeframe.min1: return "1 minute";
+				case Timeframe.min3: return "3 minutes";
+				case Timeframe.min5: return "5 minutes";
+				case Timeframe.min15: return "15 minutes";
+				case Timeframe.min30: return "30 minutes";
+				case Timeframe.h1: return "1 hour";
+				case Timeframe.h2: return "2 hours";
+				case Timeframe.h4: return "4 hours";
+				case Timeframe.h6: return "6 hours";
+				case Timeframe.h12: return "12 hours";
+				case Timeframe.d1: return "1 day";
+				case Timeframe.d3: return "3 days";
+				case Timeframe.w1: return "1 week";
+			}
+			throw new ArgumentException();
+		}
+
 		/// <exception cref="OutOfMemoryException"></exception>
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="JsonReaderException"></exception>
@@ -271,7 +273,7 @@ namespace CryptoWatcher.APIs
 	public class Candlestick
 	{
 		[JsonProperty("time")]
-		public int openTime { get; set; }
+		public long Timestamp { get; set; }
 		public float open { get; set; }
 		public float high { get; set; }
 		public float low { get; set; }
@@ -282,19 +284,21 @@ namespace CryptoWatcher.APIs
 		[JsonProperty("volumefrom")]
 		public float volume { get; set; }
 
-		public Candlestick(int closeTime, float open, float high, float low, float close, float volume)
+		public Candlestick(long timestamp, float open, float high, float low, float close, float volume)
 		{
-			this.openTime = closeTime;
+			this.Timestamp = timestamp;
 			this.open = open;
 			this.high = high;
 			this.low = low;
+			//if(close.HasValue)
 			this.close = close;
+			//else this.close
 			this.volume = volume;
 		}
 
 		public static Candlestick operator *(Candlestick a, Candlestick b)
 		{
-			return new Candlestick(a.openTime, a.open * b.open, a.high * b.high, a.low * b.low, a.close * b.close, a.volume);
+			return new Candlestick(a.Timestamp, a.open * b.open, a.high * b.high, a.low * b.low, a.close * b.close, a.volume);
 		}
 	}
 

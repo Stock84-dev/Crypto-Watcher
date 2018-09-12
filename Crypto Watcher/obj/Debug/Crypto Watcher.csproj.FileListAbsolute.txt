@@ -1,26 +1,6 @@
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\CryptoWatcher.exe.config
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\CryptoWatcher.exe
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\CryptoWatcher.pdb
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.Design.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.Fonts.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.GenerateResource.Cache
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.CoreCompileInputs.cache
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.exe
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.pdb
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.pdb
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.xml
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.pdb
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.xml
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Newtonsoft.Json.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Newtonsoft.Json.xml
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.CustomAlertForm.resources
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.Properties.Resources.resources
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Tulpep.NotificationWindow.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.MainForm.resources
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.CryptoWatcher.exe.config
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Security.Cryptography.Algorithms.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.ValueTuple.dll
@@ -117,13 +97,34 @@ D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Xml.XmlSerializer.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Xml.XPath.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Xml.XPath.XDocument.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Collections.Immutable.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\WebSocket4Net.dll
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Collections.Immutable.xml
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\EngineIoClientDotNet.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.Design.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\MetroFramework.Fonts.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Newtonsoft.Json.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\SocketIoClientDotNet.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.dll
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\SuperSocket.ClientEngine.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Collections.Immutable.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Tulpep.NotificationWindow.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\WebSocket4Net.dll
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Newtonsoft.Json.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Rest.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\Spring.Social.Core.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Collections.Immutable.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.CustomAlertForm.resources
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.MainForm.resources
 D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.Launcher.LauncherForm.resources
-D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csprojResolveAssemblyReference.cache
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.Properties.Resources.resources
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.GenerateResource.Cache
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.CoreCompileInputs.cache
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.exe
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.pdb
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csprojAssemblyReference.cache
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\CryptoWatcher.exe.config
+D:\Documents\Visual studio 2017\Projects\Crypto Watcher\Crypto Watcher\obj\Debug\Crypto Watcher.csproj.CopyComplete

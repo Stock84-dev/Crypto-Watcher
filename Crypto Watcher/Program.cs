@@ -40,19 +40,26 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Globalization;
+using System.IO.Pipes;
+using System.Text;
+using System.Threading;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using CryptoWatcher.APIs;
+using CryptoWatcher.Utilities;
 
+// TODO: make trading paired to usd (e.g. buy btc using usd then buy alt)
 namespace CryptoWatcher
 {
-    static class Program
-    {
+	static class Program
+	{
 		
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-        static void Main()
-        {
-			
+		static void Main()
+		{
 			Application.SetCompatibleTextRenderingDefault(false);
 			LauncherForm launcherForm = new LauncherForm();
 			Application.Run(launcherForm);
